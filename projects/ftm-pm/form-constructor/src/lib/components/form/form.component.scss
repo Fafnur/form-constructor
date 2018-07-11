@@ -1,0 +1,38 @@
+@import "~@angular/material/theming";
+
+.form-field {
+}
+
+.field-choices .mat-error {
+  font-size: 0.75rem;
+}
+.field-choices {
+  min-height: 54px;
+}
+.field-choices .mat-radio-button,
+.field-choices .mat-checkbox {
+  padding-right: 0.5rem;
+
+  &:last-child {
+    padding-right: 0;
+  }
+}
+
+.field-group {
+  &_wf {
+    width: 100%;
+  }
+  &_mb {
+    margin-bottom: 1rem;
+  }
+}
+
+.field-label {
+  font-size: 0.7rem;
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 5px;
+
+  .field-group.mat-form-field-invalid & {
+    color: mat-color($mat-red, 500);
+  }
+}

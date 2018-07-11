@@ -1,0 +1,37 @@
+{
+  "actions": {
+    "view": "View",
+    "details": "Details",
+    "signin": "Sign in",
+    "signup": "Sign up",
+    "signout": "Sign out",
+    "reset": "Reset",
+    "open": "Open",
+    "close": "Close",
+    "cancel": "Cancel",
+    "prev": "Previous",
+    "next": "Next",
+    "load": "Load",
+    "save": "Save",
+    "create": "Create",
+    "remove": "Remove",
+    "delete": "Delete",
+    "select": "Select",
+    "edit": "Edit",
+    "yes": "Yes",
+    "no": "No",
+    "gomain": "Go back to main page"
+  },
+  "status": {
+    "saved": "Saved",
+    "created": "Created",
+    "changed": "Changed",
+    "updated": "Updated",
+    "removed": "Removed"
+  },
+  "error": {
+    "form": {
+      "required": "Field is required"
+    }
+  }
+}

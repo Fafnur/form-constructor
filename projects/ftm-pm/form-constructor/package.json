@@ -1,0 +1,35 @@
+{
+  "name": "ftm-pm/form-constructor",
+  "description": "The form constructor for Angular",
+  "contributors": [
+    "Aleksandr Serenko <fafnur@yandex.ru>"
+  ],
+  "keywords": [
+    "angular",
+    "angular 2",
+    "form contstructor",
+    "angular forms"
+  ],
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/cdk": ">= 6.0.0",
+    "@angular/common": ">= 6.0.0",
+    "@angular/core": ">= 6.0.0",
+    "@angular/material": ">= 6.0.0",
+    "@angular/forms": ">= 6.0.0",
+    "@angular/material-moment-adapter": ">= 6.0.0",
+    "moment": ">= 2.0.0",
+    "@ngx-translate/core": ">= 10.0.0",
+    "@ngx-translate/http-loader": ">= 3.0.0"
+  },
+  "devDependencies": {},
+  "license": "MIT",
+  "homepage": "https://github.com/ftm-pm/form-constructor",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ftm-pm/form-constructor/core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ftm-pm/form-constructor/issues"
+  }
+}
