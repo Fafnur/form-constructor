@@ -1,5 +1,5 @@
 {
-  "name": "ftm-pm/form-constructor",
+  "name": "@ftm-pm/form-constructor",
   "description": "The form constructor for Angular",
   "contributors": [
     "Aleksandr Serenko <fafnur@yandex.ru>"
@@ -10,7 +10,7 @@
     "form contstructor",
     "angular forms"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "peerDependencies": {
     "@angular/cdk": ">= 6.0.0",
     "@angular/common": ">= 6.0.0",
