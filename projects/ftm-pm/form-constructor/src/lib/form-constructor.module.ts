@@ -20,7 +20,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { TransferState } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { DialogComponent, FormComponent } from './components';
+import { FormComponent } from './components';
 import { FC_SERVICE_CONFIG, FCServiceConfigInterface, FormConstructorService } from './services/form-constructor.service';
 import { DATE_FORMATS } from './utils/date-formats';
 
@@ -29,7 +29,7 @@ const FC_COMPONENTS = [
 ];
 
 const FC_ENTRY_COMPONENTS = [
-  DialogComponent
+  // DialogComponent
 ];
 
 const FC_SERVICES = [
@@ -56,12 +56,10 @@ const FC_SERVICES = [
     TranslateModule
   ],
   declarations: [
-    ...FC_COMPONENTS,
-    ...FC_ENTRY_COMPONENTS
+    ...FC_COMPONENTS
   ],
   exports: [
-    ...FC_COMPONENTS,
-    ...FC_ENTRY_COMPONENTS
+    ...FC_COMPONENTS
   ],
   entryComponents: [
     ...FC_ENTRY_COMPONENTS

@@ -2,6 +2,7 @@ import { BrowserModule, TransferState } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 import { FormConstructorModule } from 'ftm-pm/form-constructor';
@@ -20,6 +21,8 @@ export function exportTranslateStaticLoader(http: HttpClient, transferState: Tra
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
     FormConstructorModule.forRoot({
       languages: ['ru', 'en'],
       language: 'en'

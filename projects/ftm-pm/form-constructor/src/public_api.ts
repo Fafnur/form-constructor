@@ -10,7 +10,7 @@ export { FormField, FormModel } from './lib/models/form-model';
 export { FormConstructorService } from './lib/services/form-constructor.service';
 
 // Components
-export { DialogComponent } from './lib/components/dialog/dialog.component';
+// export { DialogComponent } from './lib/components/dialog/dialog.component';
 export { FormComponent } from './lib/components/form/form.component';
 
 // Types
@@ -22,6 +22,7 @@ export { DatepickerType } from './lib/types/datepicker-type';
 export { RadioType } from './lib/types/radio-type';
 export { TextType } from './lib/types/text-type';
 export { TextareaType } from './lib/types/textarea-type';
+export { SelectType } from './lib/types/select-type';
 
 // Other
 export { ErrorStateMatcher } from './lib/matchers/error-state.matcher';

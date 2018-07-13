@@ -9,6 +9,7 @@ import {
   DatepickerType,
   RadioType,
   CheckboxType,
+  SelectType,
   TextareaType
 } from 'ftm-pm/form-constructor';
 
@@ -39,6 +40,10 @@ export class AppComponent {
       birthday: '12.06.1992',
       birthdayNext: '12.06.1993',
       sex: true,
+      agent: {
+        id: 1,
+        name: 'Ivan'
+      },
       interests: [
         {
           label: 'IT',
@@ -71,6 +76,25 @@ export class AppComponent {
         type: TextType,
         options: {
           validators: [Validators.required]
+        }
+      },
+      agent: {
+        type: SelectType,
+        options: {
+          required: true,
+          validators: [Validators.required],
+          mapped: 'name',
+          mappedId: 'id',
+          choices: [
+            {
+              id: 1,
+              name: 'Ivan'
+            },
+            {
+              id: 2,
+              name: 'Alex'
+            },
+          ]
         }
       },
       birthday: {
@@ -140,5 +164,10 @@ export class AppComponent {
     this.formNode = this.fc.create(myEntityModel, {});
     this.formNode.setData(myEntity);
     console.log(this.formNode);
+  }
+
+  public onSubmit(event): void {
+    console.log(this.formNode.form.value);
+    console.log(this.formNode.getData());
   }
 }

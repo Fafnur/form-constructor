@@ -13,4 +13,9 @@ export class DatepickerType extends AbstractType {
   public transform(value: any): any {
     return value ? moment(new Date(value)) : moment();
   }
+
+  public reverseTransform(value: any): any {
+    const date = moment(new Date(value));
+    return date.format();
+  }
 }
