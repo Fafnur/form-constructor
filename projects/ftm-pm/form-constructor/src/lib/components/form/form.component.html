@@ -181,6 +181,46 @@
   </div>
 </ng-template>
 
+<ng-template #selectTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <ng-container *ngIf="component.options.translate">
+
+    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+      <mat-select placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
+                  [required]="config.required" [errorStateMatcher]="matcher">
+        <mat-option>--</mat-option>
+        <mat-option *ngFor="let choice of  component.options['choices']" [value]="choice[component.options.mappedId]">
+          {{ component.options.mapped ? choice[component.options.mapped] : choice.toString() }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
+        {{ getErrorMessage('pattern', component) | translate }}
+      </mat-error>
+      <mat-error *ngIf="component.control.hasError('required')">
+        {{ getErrorMessage('required', component) | translate }}
+      </mat-error>
+      <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+    </mat-form-field>
+  </ng-container>
+  <ng-container *ngIf="!component.options.translate">
+    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+      <mat-select placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
+                  [required]="config.required" [errorStateMatcher]="matcher" [disabled]="!!component.options.disabled">
+        <mat-option>--</mat-option>
+        <mat-option *ngFor="let choice of  component.options['choices']" [value]="choice[component.options.mappedId]">
+          {{ component.options.mapped ? choice[component.options.mapped] : choice.toString() }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
+        {{ getErrorMessage('pattern', component) }}
+      </mat-error>
+      <mat-error *ngIf="component.control.hasError('required')">
+        {{ getErrorMessage('required', component)  }}
+      </mat-error>
+      <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
+    </mat-form-field>
+  </ng-container>
+</ng-template>
+
 <ng-template #imageTemplate let-component="fieldNode" let-config="formConfig"  let-form="formNode">
   <div> imageTemplate </div>
 </ng-template>
@@ -209,6 +249,9 @@
             <div *ngSwitchCase="'image'">
               <ng-container *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
+            <div *ngSwitchCase="'select'">
+              <ng-container *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name, language)"></ng-container>
+            </div>
           </div>
         </ng-container>
       </mat-tab>
@@ -233,6 +276,9 @@
       </div>
       <div *ngSwitchCase="'image'">
         <ng-container *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div *ngSwitchCase="'select'">
+        <ng-container *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name)"></ng-container>
       </div>
     </div>
   </ng-container>

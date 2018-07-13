@@ -49,8 +49,14 @@ export class FormComponent implements OnInit {
 
   public getFieldValue(type: string, value: string, fieldNode: FieldNode, defaultValue: any = null) {
     let fieldValue: any = defaultValue;
+
     if (fieldNode.options && fieldNode.options[type] && fieldNode.options[type][value]) {
       fieldValue = fieldNode.options[type][value];
+    } else {
+      fieldValue = fieldNode.name;
+    }
+    if (fieldNode.options.translate) {
+      fieldValue = this.formNode.config.formName + fieldValue;
     }
 
     return fieldValue;
