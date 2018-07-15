@@ -6,6 +6,7 @@ import { FormNode, FormNodeConfig } from '../models/form-node';
 import { FormTypeFactory, FormTypeInterface, FormTypeOptions, FormTypes } from '../types/form-type';
 
 export const FC_SERVICE_CONFIG: InjectionToken<FCServiceConfigInterface> = new InjectionToken<FCServiceConfigInterface>('FC_SERVICE_CONFIG');
+export const FC_SERVICE_GUID: InjectionToken<any> = new InjectionToken<any>('FC_SERVICE_GUID');
 
 /**
  * FormConstructorConfigInterface
@@ -13,6 +14,7 @@ export const FC_SERVICE_CONFIG: InjectionToken<FCServiceConfigInterface> = new I
 export interface FCServiceConfigInterface {
   languages?: string[];
   language?: string;
+  guid?(): string;
 }
 
 /**
@@ -34,7 +36,8 @@ export class FormConstructorService implements FormConstructorInterface {
   private readonly languages: string[];
 
   public constructor(private formBuilder: FormBuilder,
-                     @Inject(FC_SERVICE_CONFIG) private config: FCServiceConfigInterface) {
+                     @Inject(FC_SERVICE_CONFIG) private config: FCServiceConfigInterface,
+                     @Inject(FC_SERVICE_GUID) private guid: any) {
     this.languages = this.config.languages || [];
     this.language = this.config.language || '';
   }
@@ -56,6 +59,12 @@ export class FormConstructorService implements FormConstructorInterface {
         });
       } else {
         config[fieldName] = this.getFieldConfig(fieldName, type);
+        if (types[fieldName].type === 'select' && fieldOptions['dialog']) {
+          const fieldDialog = fieldOptions['dialog'];
+          const fieldDialogName: string = `_${types[fieldName].type}_${fieldName}`;
+          types[fieldDialogName] = FormTypeFactory.create(fieldDialog.type, fieldDialogName, fieldDialog.options || {});
+          config[fieldDialogName] = this.getFieldConfig(fieldDialogName, types[fieldDialogName]);
+        }
       }
     }
 

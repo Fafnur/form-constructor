@@ -1,33 +1,55 @@
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Overlay } from '@angular/cdk/overlay';
+import { Component, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 import { ErrorStateMatcher } from '../../matchers/error-state.matcher';
 import { FieldNode, FormNode } from '../../models/form-node';
-import { FormTypeInterface } from '../../types/form-type';
+import { FormTypeInterface, FormTypeOptions } from '../../types/form-type';
+import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
   selector: 'fc-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss']
 })
-export class FormComponent implements OnInit {
+export class FormComponent implements OnInit, OnDestroy {
   public matcher: ErrorStateMatcher = new ErrorStateMatcher();
   @Input() public formNode: FormNode;
+  private subscription: Subscription;
 
-  public constructor() {
+  public constructor(public dialog: MatDialog,
+                     public overlay: Overlay) {
+    this.subscription = new Subscription();
   }
 
   public ngOnInit(): void  {
   }
 
+  public ngOnDestroy(): void  {
+    this.subscription.unsubscribe();
+  }
+
   public getComponents(filter: number = -1): any[] {
-    let values = Object.values(this.formNode.controls);
-    switch (filter) {
-      case 0:
-        values = values.filter(item => !item.options['multiLanguage']);
-        break;
-      case 1:
-        values = values.filter(item => item.options['multiLanguage']);
-        break;
+    const values: any[] = [];
+    for (const key of Object.keys(this.formNode.controls)) {
+      const control = this.formNode.controls[key];
+      // skip system controls (_select_)
+      if (key.charAt(0) === '_') {
+        continue;
+      }
+      switch (filter) {
+        case 0:
+          if (!control.options['multiLanguage']) {
+            values.push(control);
+          }
+          break;
+        case 1:
+          if (control.options['multiLanguage']) {
+            values.push(control);
+          }
+          break;
+      }
     }
 
     return values;
@@ -37,13 +59,15 @@ export class FormComponent implements OnInit {
     return control.options['templateRef'] ? control.options['templateRef'] : tpl;
   }
 
-  public getContext(fieldName: string, language ?: string): any {
+  public getContext(fieldName: string, language ?: string, parent ?: FieldNode): any {
     const name: string = language ? `${fieldName}_${language}` : fieldName;
     return {
       $implicit: name,
       formNode: this.formNode,
       formConfig: this.formNode.config,
-      fieldNode: this.formNode.getFieldNode(name)
+      fieldNode: this.formNode.getFieldNode(name),
+      language: language,
+      parent: parent
     };
   }
 
@@ -56,7 +80,7 @@ export class FormComponent implements OnInit {
       fieldValue = fieldNode.name;
     }
     if (fieldNode.options.translate) {
-      fieldValue = this.formNode.config.formName + fieldValue;
+      fieldValue = this.formNode.config.localePrefix + fieldValue;
     }
 
     return fieldValue;
@@ -117,5 +141,30 @@ export class FormComponent implements OnInit {
     } else {
       fieldNode.control.setValue([]);
     }
+  }
+
+  public onOpenDialog(event, fieldNode: FieldNode, options: FormTypeOptions, parent ?: FieldNode): void {
+    const data: any = this.formNode.form.get(fieldNode.name).value || {};
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: options['dialog'] && options['dialog'].widows ? options['dialog'].widows : '480px',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+      data: {
+        fieldNode: fieldNode,
+        options: options,
+        data: data
+      }
+    });
+    this.subscription.add(dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.formNode.form.get(fieldNode.name).setValue(result);
+      } else {
+        // this.form.get('client').setValue(null);
+      }
+      if (parent) {
+        parent.options.choices.push(result);
+        // this.formNode.updateOptions(parent.name, parent.options);
+        parent.control.setValue(result[parent.options['mappedId']]);
+      }
+    }));
   }
 }

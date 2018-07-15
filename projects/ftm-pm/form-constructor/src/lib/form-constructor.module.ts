@@ -20,21 +20,25 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { TransferState } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { FormComponent } from './components';
-import { FC_SERVICE_CONFIG, FCServiceConfigInterface, FormConstructorService } from './services/form-constructor.service';
-import { DATE_FORMATS } from './utils/date-formats';
+import { DialogComponent, FormComponent } from './components';
+import { FC_SERVICE_CONFIG, FC_SERVICE_GUID, FCServiceConfigInterface, FormConstructorService } from './services/form-constructor.service';
+import { DATE_FORMATS, Guid } from './utils';
 
 const FC_COMPONENTS = [
   FormComponent
 ];
 
 const FC_ENTRY_COMPONENTS = [
-  // DialogComponent
+  DialogComponent
 ];
 
 const FC_SERVICES = [
   FormConstructorService
 ];
+
+export function guid(create) {
+  return new create();
+}
 
 @NgModule({
   imports: [
@@ -56,7 +60,8 @@ const FC_SERVICES = [
     TranslateModule
   ],
   declarations: [
-    ...FC_COMPONENTS
+    ...FC_COMPONENTS,
+    ...FC_ENTRY_COMPONENTS
   ],
   exports: [
     ...FC_COMPONENTS
@@ -80,6 +85,10 @@ export class FormConstructorModule {
           provide: FC_SERVICE_CONFIG,
           useValue: config
         },
+        {
+          provide: FC_SERVICE_GUID,
+          useFactory: (typeof config.guid === 'function' ? config.guid : Guid.v4)
+        },
         {provide: MAT_DATE_LOCALE, useValue: config.language},
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
         {provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS}
@@ -87,3 +96,4 @@ export class FormConstructorModule {
     };
   }
 }
+
