@@ -1,3 +1,4 @@
+import { CdkTableModule } from '@angular/cdk/table';
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,23 +10,31 @@ import {
   MatDialogModule,
   MatIconModule,
   MatInputModule,
+  MatPaginatorModule,
   MatProgressSpinnerModule,
   MatRadioModule,
   MatSelectModule,
   MatSnackBarModule,
+  MatSortModule,
+  MatTableModule,
   MatTabsModule
 } from '@angular/material';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { TransferState } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { DialogComponent, FormComponent } from './components';
+import { DialogComponent } from './components/dialog/dialog.component';
+import { FormComponent } from './components/form/form.component';
+import { ListComponent } from './components/list/list.component';
+// import { FormConstructorRoutingModule } from './form-constructor-routing.module';
 import { FC_SERVICE_CONFIG, FC_SERVICE_GUID, FCServiceConfigInterface, FormConstructorService } from './services/form-constructor.service';
-import { DATE_FORMATS, Guid } from './utils';
+import { DATE_FORMATS } from './utils/date-formats';
 
 const FC_COMPONENTS = [
-  FormComponent
+  FormComponent,
+  ListComponent
 ];
 
 const FC_ENTRY_COMPONENTS = [
@@ -36,15 +45,12 @@ const FC_SERVICES = [
   FormConstructorService
 ];
 
-export function guid(create) {
-  return new create();
-}
-
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    CdkTableModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -52,12 +58,16 @@ export function guid(create) {
     MatDialogModule,
     MatIconModule,
     MatInputModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatRadioModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
     MatTabsModule,
-    TranslateModule
+    RouterModule.forChild([]),
+    TranslateModule.forChild({})
   ],
   declarations: [
     ...FC_COMPONENTS,
@@ -72,10 +82,6 @@ export function guid(create) {
 })
 export class FormConstructorModule {
   public static forRoot(config: FCServiceConfigInterface): ModuleWithProviders {
-    if (!config.language) {
-      config.language = 'en';
-    }
-
     return {
       ngModule: FormConstructorModule,
       providers: [
@@ -83,13 +89,14 @@ export class FormConstructorModule {
         TransferState,
         {
           provide: FC_SERVICE_CONFIG,
-          useValue: config
+          useValue: {
+            ...{
+              language: 'en',
+              languages: ['en']
+            }, config
+          }
         },
-        {
-          provide: FC_SERVICE_GUID,
-          useFactory: (typeof config.guid === 'function' ? config.guid : Guid.v4)
-        },
-        {provide: MAT_DATE_LOCALE, useValue: config.language},
+        {provide: MAT_DATE_LOCALE, useValue: config.language ? config.language : 'en'},
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
         {provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS}
       ]
