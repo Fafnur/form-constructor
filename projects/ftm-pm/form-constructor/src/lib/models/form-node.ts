@@ -115,10 +115,10 @@ export class FormNode implements FormNodeInterface {
       this.language = this.config.language;
     }
     if (!this.config.localePrefix) {
-      this.config.localePrefix = 'smartForm';
+      this.config.localePrefix = 'fcForm.';
     }
     if (!this.config.formName) {
-      this.config.formName = 'smart-form';
+      this.config.formName = 'fc-form';
     }
   }
 
@@ -160,6 +160,9 @@ export class FormNode implements FormNodeInterface {
       });
     }
     for (const fieldName of Object.keys(this.model)) {
+      if (fieldName.charAt(0) === '_') {
+        continue;
+      }
       if (fieldName !== this.translationsField && this.model.hasOwnProperty(fieldName)) {
         const fieldOptions: FormTypeOptions = this.controls[fieldName].options;
         const formType: FormTypeInterface = this.controls[fieldName];
@@ -208,9 +211,13 @@ export class FormNode implements FormNodeInterface {
   }
 
   public getFieldNode(fieldName: string): FieldNode {
-    const isMulti: boolean = fieldName.indexOf('_') >= 0;
-    const name: string = isMulti ? fieldName.substr(0, fieldName.indexOf('_')) : fieldName;
-    const language: string = isMulti ? fieldName.substr(fieldName.indexOf('_') + 1) : null;
+    let pos = 0;
+    if (fieldName.charAt(0) === '_') {
+      pos = fieldName.indexOf('_', 1) + 1;
+    }
+    const isMulti: boolean =  fieldName.indexOf('_', pos) >= 0;
+    const name: string = isMulti ? fieldName.substr(0, fieldName.indexOf('_', pos)) : fieldName;
+    const language: string = isMulti ? fieldName.substr(fieldName.indexOf('_', pos) + 1) : null;
     const type: FormTypeInterface = this.controls[name];
     const options: FormTypeOptions = Object.assign({}, type.options || {});
 

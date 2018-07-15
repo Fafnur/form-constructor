@@ -33,5 +33,22 @@
     "form": {
       "required": "Field is required"
     }
+  },
+  "dashboard": {
+    "title": "Welcome to FC demo!",
+    "form": "Demo form: "
+  },
+  "fcForm": {
+    "id": "ID",
+    "site": "site",
+    "description": "Description",
+    "birthday": "Birthday",
+    "sex": "Gender",
+    "name": "Name",
+    "firstname": "First name",
+    "lastname": "Last name",
+    "agent": "Agent",
+    "interests": "interests",
+    "translations": "translations"
   }
 }
