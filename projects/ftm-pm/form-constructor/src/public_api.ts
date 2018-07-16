@@ -12,7 +12,7 @@ export { FormField, FormModel } from './lib/models/form-model';
 export { FormConstructorService } from './lib/services/form-constructor.service';
 
 // Components
-// export { DialogComponent } from './lib/components/dialog/dialog.component';
+export { ListComponent, ListCell, ListConfig, transformList } from './lib/components/list/list.component';
 export { FormComponent } from './lib/components/form/form.component';
 
 // Types

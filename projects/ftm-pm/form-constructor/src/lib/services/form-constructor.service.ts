@@ -36,8 +36,7 @@ export class FormConstructorService implements FormConstructorInterface {
   private readonly languages: string[];
 
   public constructor(private formBuilder: FormBuilder,
-                     @Inject(FC_SERVICE_CONFIG) private config: FCServiceConfigInterface,
-                     @Inject(FC_SERVICE_GUID) private guid: any) {
+                     @Inject(FC_SERVICE_CONFIG) private config: FCServiceConfigInterface) {
     this.languages = this.config.languages || [];
     this.language = this.config.language || '';
   }
