@@ -17,8 +17,14 @@ export { FormComponent } from './lib/components/form/form.component';
 
 // Types
 export {
-  AbstractType, FORM_TYPE_OPTIONS_DEFAULT, FormType, FormTypeFactory, FormTypeInterface, FormTypeOptions, FormTypes
+  AbstractType,
+  FORM_TYPE_OPTIONS_DEFAULT,
+  FormType, FormTypeFactory,
+  FormTypeInterface,
+  FormTypeOptions,
+  FormTypes
 } from './lib/types/form-type';
+export { BoolType } from './lib/types/bool-type';
 export { CheckboxType } from './lib/types/checkbox-type';
 export { DialogType } from './lib/types/dialog-type';
 export { DatepickerType } from './lib/types/datepicker-type';
