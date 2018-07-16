@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  BoolType,
   DialogType,
   FormConstructorService,
   FormModel,
@@ -158,6 +159,13 @@ export class AppComponent {
         type: DatepickerType,
         options: {
           validators: [Validators.required]
+        }
+      },
+      verify: {
+        type: BoolType,
+        options: {
+          validators: [Validators.required],
+          label: 'Is verify?'
         }
       },
       sex: {

@@ -236,6 +236,25 @@
   </ng-container>
 </ng-template>
 
+<ng-template #boolTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <ng-container *ngIf="component.options.translate">
+    <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
+      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{ component.options.label | translate }}</mat-checkbox>
+      <mat-error *ngIf="component.control.hasError('required') && !component.control.value">
+        {{ getErrorMessage('required', component) | translate  }}
+      </mat-error>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!component.options.translate">
+    <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
+      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{ component.options.label }}</mat-checkbox>
+      <mat-error *ngIf="component.control.hasError('required')">
+        {{ getErrorMessage('required', component) }}
+      </mat-error>
+    </div>
+  </ng-container>
+</ng-template>
+
 <ng-template #imageTemplate let-component="fieldNode" let-config="formConfig"  let-form="formNode">
   <div> imageTemplate </div>
 </ng-template>
@@ -263,6 +282,9 @@
             </div>
             <div *ngSwitchCase="'dialog'">
               <ng-container *ngTemplateOutlet="getTemplate(control, dialogTemplate); context: getContext(control.name, language)"></ng-container>
+            </div>
+            <div *ngSwitchCase="'bool'">
+              <ng-container *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'image'">
               <ng-container *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name, language)"></ng-container>
@@ -294,6 +316,9 @@
       </div>
       <div *ngSwitchCase="'dialog'">
         <ng-container *ngTemplateOutlet="getTemplate(control, dialogTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div *ngSwitchCase="'bool'">
+        <ng-container *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'image'">
         <ng-container *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name)"></ng-container>

@@ -3,6 +3,7 @@
 .form-field {
 }
 
+.field-bool .mat-error,
 .field-choices .mat-error {
   font-size: 0.75rem;
 }
@@ -34,5 +35,16 @@
 
   .field-group.mat-form-field-invalid & {
     color: mat-color($mat-red, 500);
+  }
+}
+
+.field-bool {
+  margin-bottom: 1rem;
+  position: relative;
+
+  .mat-error {
+    position: absolute;
+    bottom: -1rem;
+    left: 0;
   }
 }
