@@ -3,7 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  languages: ['en', 'ru'],
+  language: 'en',
+  app: {
+    id: 'fc-demo',
+    path: 'http://localhost:4200',
+  },
+  api: {
+    prefix: '',
+    name: 'backend',
+    path: 'http://localhost:9000'
+  },
 };
 
 /*

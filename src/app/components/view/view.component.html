@@ -1,0 +1,14 @@
+<ng-container *ngIf="user; else spinner">
+  <h3>{{ 'user.view.title' | translate }}</h3>
+  <mat-card>
+    <div class="table-responsive">
+      <fc-view [data]="user" [nodeList]="nodeList" [config]="viewConfig">
+      </fc-view>
+    </div>
+  </mat-card>
+</ng-container>
+<ng-template #spinner>
+  <div class="mat-spinner-wrapper">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

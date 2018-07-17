@@ -20,6 +20,7 @@
     "edit": "Edit",
     "yes": "Yes",
     "no": "No",
+    "back": "Back",
     "gomain": "Go back to main page"
   },
   "status": {
@@ -34,9 +35,36 @@
       "required": "Field is required"
     }
   },
+  "menu": {
+    "dashboard": "Dashboard",
+    "list": "List component",
+    "edit": "Edit component",
+    "view": "View component"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Russian"
+  },
+  "country": {
+    "en": "England",
+    "us": "USA",
+    "ru": "Russian"
+  },
+  "currency": {
+    "rub": "RUB",
+    "dollar": "Dollar",
+    "pound": "Pound"
+  },
   "dashboard": {
     "title": "Welcome to FC demo!",
     "form": "Demo form: "
+  },
+  "errors": {
+    "serverError": {
+      "title": "System error: 500",
+      "fixed": "May be you didn't start mock server?"
+    },
+    "notFound": "Page not found"
   },
   "fcForm": {
     "id": "ID",
@@ -50,5 +78,47 @@
     "agent": "Agent",
     "interests": "interests",
     "translations": "translations"
+  },
+  "list": {
+    "empty": "Collection is empty",
+    "actions": "Actions",
+    "filter": "Filter",
+    "number": "№"
+  },
+  "user": {
+    "form":  {
+      "id": "ID",
+      "countryCode": "Country code",
+      "currencyCode": "Currency code",
+      "firstname": "First name",
+      "middlename": "Middle name",
+      "lastname": "Last name",
+      "madein": "Madein",
+      "minTerm": "Min term",
+      "maxTerm": "Max term",
+      "minProlong": "Min prolong",
+      "maxProlong": "Max prolong",
+      "minSum": "Min sum",
+      "maxSum": "Max sum",
+      "overdueTerm": "Overdue term",
+      "collectionPeriod": "Collection period",
+      "email": "Email",
+      "createdAt": "Created at",
+      "numberRequests": "Number of requests",
+      "number": "№"
+    },
+    "menu": {
+      "borrowers": "Users",
+      "list": "List of users",
+      "view": "View user",
+      "edit": "Edit user",
+      "new": "New user"
+    },
+    "list": {
+      "title": "All users"
+    },
+    "view": {
+      "title": "View user"
+    }
   }
 }

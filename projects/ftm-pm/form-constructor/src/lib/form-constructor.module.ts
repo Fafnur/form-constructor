@@ -28,13 +28,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { FormComponent } from './components/form/form.component';
 import { ListComponent } from './components/list/list.component';
-// import { FormConstructorRoutingModule } from './form-constructor-routing.module';
+import { ViewComponent } from './components/view/view.component';
 import { FC_SERVICE_CONFIG, FC_SERVICE_GUID, FCServiceConfigInterface, FormConstructorService } from './services/form-constructor.service';
 import { DATE_FORMATS } from './utils/date-formats';
 
 const FC_COMPONENTS = [
   FormComponent,
-  ListComponent
+  ListComponent,
+  ViewComponent
 ];
 
 const FC_ENTRY_COMPONENTS = [
