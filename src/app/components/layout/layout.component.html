@@ -1,0 +1,18 @@
+<div class="container">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let link of menu"
+       [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+      {{ link.label | translate }}
+    </a>
+    <button mat-button class="nav-language" type="button" [matMenuTriggerFor]="appMenu">
+      {{ language }}
+    </button>
+  </nav>
+  <router-outlet></router-outlet>
+</div>
+
+<mat-menu #appMenu="matMenu">
+  <button class="select-language" mat-menu-item *ngFor="let lang of languages" (click)="onSelectLanguage(lang)">
+    {{ lang }}
+  </button>
+</mat-menu>

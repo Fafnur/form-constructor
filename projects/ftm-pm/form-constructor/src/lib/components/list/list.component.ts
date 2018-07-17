@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource, PageEvent } from '@angular/material';
+import * as moment_ from 'moment/moment';
+
+const moment = moment_;
 
 export interface ListConfig {
-  title?: string;
   responsive?: boolean;
   sort?: boolean;
   pageSizeOptions?: number[];
@@ -10,18 +12,21 @@ export interface ListConfig {
   pageSize?: number;
   pageIndex?: number;
   translatePrefix?: string;
+  columns?: string[];
+  filter?: boolean;
 }
 
-export interface ListCell {
-  columnDef?: string;
-  type?: string;
+export interface NodeCell {
+  columnDef: string;
+  type: string;
   header?: string;
   usePrefix?: boolean;
+  isNullValue?: string;
 
   dataName?(row): string;
 }
 
-export function transformList(columns: any[]): ListCell[] {
+export function transformList(columns: any[], isNullValue: string = '-'): NodeCell[] {
   return columns.map(item => {
     let conf = item;
     if (typeof item === 'string') {
@@ -30,8 +35,62 @@ export function transformList(columns: any[]): ListCell[] {
         type: 'text',
         header: item,
         usePrefix: true,
-        dataName: (row) => row[item] || ''
+        dataName: (row) => {
+          if (typeof row === 'object') {
+            return row[item];
+          } else if (row) {
+            return row;
+          } else {
+            return isNullValue;
+          }
+        }
       };
+    } else {
+      if (!item.header) {
+        item.header = item.columnDef;
+      }
+      if (item.usePrefix == null) {
+        item.usePrefix = true;
+      }
+      if (typeof item.dataName !== 'function') {
+        item.dataName = (row) => {
+          if (typeof row === 'object') {
+            return row[item];
+          } else if (row) {
+            return row;
+          } else {
+            return item.isNullValue ? item.isNullValue : isNullValue;
+          }
+        };
+      }
+      switch (item.type) {
+        case 'bool':
+          item.dataName = (row) => {
+            if (typeof row === 'object') {
+              return !!row[item];
+            } else if (row != null) {
+              return row;
+            } else {
+              return false;
+            }
+          };
+          break;
+        case 'date':
+          item.dataName = (row) => {
+            if (typeof row === 'object') {
+              if (row[item]) {
+                return moment(new Date(row[item]));
+              } else {
+                return moment(new Date());
+              }
+            } else if (row) {
+              return moment(new Date(row));
+            } else {
+              return moment(new Date());
+            }
+          };
+          break;
+      }
     }
 
     return conf;
@@ -46,7 +105,7 @@ export function transformList(columns: any[]): ListCell[] {
 export class ListComponent implements OnInit, OnChanges {
   @Input() public data: any;
   @Input() public config: ListConfig;
-  @Input() public columns: any[] = [];
+  @Input() public nodeList: NodeCell[];
   public displayedColumns: string[];
   public dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
@@ -59,18 +118,19 @@ export class ListComponent implements OnInit, OnChanges {
       ... <ListConfig>{
         count: 0,
         responsive: true,
+        filter: true,
         sort: false,
         pageSizeOptions: [5, 10, 15, 25],
         pageSize: 10,
-        pageIndex: 0
+        pageIndex: 0,
       }, ...this.config
     };
   }
 
   public ngOnChanges(): void {
-    if (this.columns != null && this.data != null) {
+    if (this.nodeList != null && this.data != null) {
       this.dataSource = new MatTableDataSource(this.data);
-      this.displayedColumns = this.columns.map(x => x.columnDef);
+      this.displayedColumns = this.config.columns && this.config.columns.length ? this.config.columns : this.nodeList.map(x => x.columnDef);
       // this.dataSource.paginator = this.paginator;
       // this.dataSource.paginator.pageSize = this.config.pageSize;
       // this.dataSource.paginator.pageIndex = this.config.pageIndex;
@@ -102,7 +162,7 @@ export class ListComponent implements OnInit, OnChanges {
     return i + 1 + (this.config.pageIndex > 0 ? this.config.pageIndex - 1 : 0) * this.config.pageSize;
   }
 
-  public getHeader(column: ListCell, header: string = null, action: boolean = null): string {
+  public getHeader(column: NodeCell, header: string = null, action: boolean = null): string {
     if (header === null) {
       header = column.header;
     }

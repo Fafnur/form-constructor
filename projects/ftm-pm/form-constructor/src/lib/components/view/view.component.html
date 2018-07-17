@@ -1,0 +1,9 @@
+<div class="fc-view-group" *ngFor="let column of displayedColumns; let i=index">
+  <div class="fc-view-label">
+    <strong>{{ column }}</strong>
+  </div>
+  <div class="fc-view-value">
+    {{ displayView(column) }}
+  </div>
+</div>
+<ng-content></ng-content>
