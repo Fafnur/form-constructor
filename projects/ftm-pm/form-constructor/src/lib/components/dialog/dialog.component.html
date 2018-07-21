@@ -1,4 +1,4 @@
-<form [formGroup]="formNode.form" (ngSubmit)="onSave($event)">
+<form class="mat-dialog-content" [formGroup]="formNode.form" (ngSubmit)="onSave($event)">
   <fc-form [formNode]="formNode"></fc-form>
   <button mat-raised-button color="primary" type="button" (click)="onSave($event)">{{ 'actions.save' | translate }}</button>
   <button mat-raised-button color="primary" type="button" (click)="onCancel($event)">{{ 'actions.cancel' | translate }}</button>

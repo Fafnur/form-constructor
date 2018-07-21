@@ -1,9 +1,11 @@
 import { Validators } from '@angular/forms';
-import { FormModel, NodeCell, RadioType, TextType, transformList } from 'ftm-pm/form-constructor';
+import { DialogType, FormModel, NodeCell, RadioType, SelectType, TextType, transformList } from 'ftm-pm/form-constructor';
 
 import { TimestampableRestEntity } from './rest-entity';
 import { CurrencyChoices } from './currency';
 import { CountryChoices } from './country';
+import { Client, ClientModel } from './client';
+import { Component } from '@angular/core';
 
 /**
  * User
@@ -26,6 +28,7 @@ export class User extends TimestampableRestEntity {
   public numberRequests: number;
   public email: string;
   public image: string;
+  public client: Client;
 
   get avatar(): string {
     return this.image ? this.image : '/assets/images/theme/default-avatar.png';
@@ -40,6 +43,9 @@ export class User extends TimestampableRestEntity {
  * UserModel
  */
 export const UserModel: FormModel = {
+  _config: {
+    localePrefix: 'user.form.'
+  },
   id: {
     type: TextType,
     options: {
@@ -69,6 +75,27 @@ export const UserModel: FormModel = {
     type: TextType,
     options: {
       validators: []
+    }
+  },
+  client: {
+    type: SelectType,
+    options: {
+      required: true,
+      validators: [Validators.required],
+      mapped: 'fullName',
+      mappedId: 'id',
+      choices: [],
+      dialog: {
+        type: DialogType,
+        options: {
+          validators: [],
+          button: {
+            label: 'actions.create',
+            color: 'primary'
+          },
+          model: ClientModel
+        }
+      },
     }
   },
   email: {
@@ -183,3 +210,35 @@ export const UserList: NodeCell[] = transformList([
     getAction: (action, item): string[] => ['/users', item.id, ...action['routes']]
   }
 ]);
+//
+// @FcEntity({
+//   config: {
+//     formName: 'user',
+//     localePrefix: 'user.',
+//   },
+//   types: {
+//     form: {
+//       submit: () => {},
+//     },
+//     list: {
+//       actions: []
+//     }
+//   }
+// })
+// export class Suser {
+//   @FcField({
+//     form: {
+//       type: TextType,
+//       options: {
+//         validators: [Validators.required]
+//       }
+//     },
+//     view: {
+//       type: 'text',
+//       options: {
+//         validators: [Validators.required]
+//       }
+//     },
+//   })
+//   public firstname: string;
+// }

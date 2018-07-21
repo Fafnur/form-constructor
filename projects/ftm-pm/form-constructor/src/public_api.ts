@@ -5,7 +5,7 @@
 // Models
 import { DialogType } from './lib/types/dialog-type';
 
-export { FormNode, FieldNode, FormNodeConfig, FormNodeInterface } from './lib/models/form-node';
+export { FormNode, FieldNode, FormNodeConfig, FormNodeChildrenConfig, FormNodeInterface } from './lib/models/form-node';
 export { FormField, FormModel } from './lib/models/form-model';
 
 // Services

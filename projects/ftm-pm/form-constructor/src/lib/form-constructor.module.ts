@@ -67,7 +67,7 @@ const FC_SERVICES = [
     MatSortModule,
     MatTableModule,
     MatTabsModule,
-    RouterModule.forChild([]),
+    RouterModule,
     TranslateModule.forChild({})
   ],
   declarations: [

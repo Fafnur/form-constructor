@@ -46,8 +46,10 @@ export class FormConstructorService implements FormConstructorInterface {
                 after?: (formModel: FormModel, types: FormTypes, form: FormGroup, formComponent: FormNode) => void): FormNode {
     const types: FormTypes = {};
     const config: any = {};
-    for (const fieldName of Object.keys(formModel)) {
-      const field: FormField = formModel[fieldName];
+    const fields: string[] = Object.keys(formModel).filter(item => item.charAt(0) !== '_');
+
+    for (const fieldName of fields) {
+      const field: FormField = <FormField>formModel[fieldName];
       types[fieldName] = FormTypeFactory.create(field.type, fieldName, field.options);
       const type = types[fieldName];
       const fieldOptions = (<FormTypeOptions>type.options);
@@ -72,7 +74,8 @@ export class FormConstructorService implements FormConstructorInterface {
     if (before) {
       before(formModel, types, form);
     }
-    const formComponent = new FormNode(formModel, types, form, this.languages, this.language, componentConfig);
+    const formNodeConfig = {...formModel['_config'], ...componentConfig};
+    const formComponent = new FormNode(formModel, types, form, this.languages, this.language, formNodeConfig );
     if (after) {
       after(formModel, types, form, formComponent);
     }
