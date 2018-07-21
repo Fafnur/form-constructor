@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
-import { FieldNode, FormNode } from '../../models/form-node';
+import { FieldNode, FormNode, FormNodeConfig } from '../../models/form-node';
 import { FormConstructorService } from '../../services/form-constructor.service';
 import { FormTypeOptions } from '../../types/form-type';
 
@@ -9,6 +9,7 @@ export interface FCDialogOptions {
   fieldNode: FieldNode;
   options: FormTypeOptions;
   data ?: any;
+  config ?: FormNodeConfig;
 }
 
 @Component({
@@ -24,7 +25,7 @@ export class DialogComponent implements OnInit, OnDestroy {
                      private fc: FormConstructorService) {
 
     const options = this.dialogData.fieldNode.options;
-    this.formNode = this.fc.create(options['model'], options['config'] || {});
+    this.formNode = this.fc.create(options['model'], this.dialogData.config);
     if (options['configOptions']) {
       for (const key of Object.keys(options['configOptions'])) {
         this.formNode.updateOptions(key, options['configOptions'][key]);

@@ -28,6 +28,17 @@ export interface FormNodeConfig {
   localePrefix?: string;
   submit?: any;
   formName?: string;
+  fields ?: string[];
+  excludedFields ?: string[];
+  autoErrors ?: boolean;
+  childrenConfig ?: FormNodeChildrenConfig;
+}
+
+/**
+ * FormNodeChildrenConfig
+ */
+export interface FormNodeChildrenConfig {
+  [key: string]: FormNodeConfig;
 }
 
 /**
@@ -92,11 +103,18 @@ export class FormNode implements FormNodeInterface {
     this.form = form;
     this.languages = languages;
     this.language = language;
-    this.config = config;
+    this.config = <FormNodeConfig> {...{
+        formName: 'fc-form',
+        localePrefix: 'fcForm.',
+        autoErrors: false,
+        excludedFields: []
+      }, ...config};
+
+    const fields: string[] = Object.keys(this.model).filter(item => item.charAt(0) !== '_');
 
     if (this.config.multiLanguage == null) {
       this.config.multiLanguage = false;
-      for (const fieldName of Object.keys(this.model)) {
+      for (const fieldName of fields) {
         const fieldOptions: FormTypeOptions = this.controls[fieldName].options;
         if (fieldOptions.multiLanguage) {
           this.config.multiLanguage = true;
@@ -109,16 +127,10 @@ export class FormNode implements FormNodeInterface {
     } else {
       this.languages = this.config.languages;
     }
-    if (!this.config.language) {
+    if (this.config.language) {
       this.config.language = this.language;
     } else {
       this.language = this.config.language;
-    }
-    if (!this.config.localePrefix) {
-      this.config.localePrefix = 'fcForm.';
-    }
-    if (!this.config.formName) {
-      this.config.formName = 'fc-form';
     }
   }
 
@@ -129,9 +141,12 @@ export class FormNode implements FormNodeInterface {
   public setData(entity: Object | null): void {
     if (entity) {
       const translations: any = entity[this.translationsField];
-      for (const fieldName of Object.keys(this.model)) {
+      const fields: string[] = this.config.fields ? this.config.fields :
+        Object.keys(this.controls).filter(item => this.config.excludedFields.indexOf(item) < 0);
+
+      for (const fieldName of fields) {
         if (fieldName !== this.translationsField && this.model.hasOwnProperty(fieldName)) {
-          const value = entity[fieldName] || this.model[fieldName].options['defaultValue'] || null;
+          const value = entity[fieldName] || (<FormField>this.model[fieldName]).options['defaultValue'] || null;
           const fieldOptions: FormTypeOptions = this.controls[fieldName].options;
           const formType: FormTypeInterface = this.controls[fieldName];
           if (fieldOptions.multiLanguage) {
@@ -226,7 +241,7 @@ export class FormNode implements FormNodeInterface {
     component.language = language;
     component.options = options;
     component.type = type;
-    component.model = this.model[name];
+    component.model = <FormField>this.model[name];
     component.name = fieldName;
     component.control = this.form.get(fieldName);
 
@@ -235,7 +250,9 @@ export class FormNode implements FormNodeInterface {
 
   public updateOptions(name: string, options: any): void {
     const type: FormTypeInterface = this.controls[name];
-    type.setOptions({...type.options, ...options});
+    const newOptions = {...type.options, ...options};
+    (<FormField>this.model[name]).options = newOptions;
+    type.setOptions(newOptions);
   }
 
   private setField(formType: FormTypeInterface, fieldName: string, value: any): void {

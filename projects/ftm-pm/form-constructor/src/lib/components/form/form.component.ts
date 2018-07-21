@@ -23,16 +23,18 @@ export class FormComponent implements OnInit, OnDestroy {
     this.subscription = new Subscription();
   }
 
-  public ngOnInit(): void  {
+  public ngOnInit(): void {
   }
 
-  public ngOnDestroy(): void  {
+  public ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
   public getComponents(filter: number = -1): any[] {
     const values: any[] = [];
-    for (const key of Object.keys(this.formNode.controls)) {
+    const fields: string[] = this.formNode.config.fields ? this.formNode.config.fields :
+      Object.keys(this.formNode.controls).filter(item => this.formNode.config.excludedFields.indexOf(item) < 0);
+    for (const key of fields) {
       const control = this.formNode.controls[key];
       // skip system controls (_select_)
       if (key.charAt(0) === '_') {
@@ -95,7 +97,7 @@ export class FormComponent implements OnInit, OnDestroy {
     }
 
     if (fieldNode.options.translate) {
-      placeholder = this.formNode.config.formName + placeholder;
+      placeholder = this.formNode.config.localePrefix + placeholder;
     }
 
     return placeholder;
@@ -104,8 +106,10 @@ export class FormComponent implements OnInit, OnDestroy {
   public getErrorMessage(type: string, fieldNode: FieldNode): string {
     let errorMessage: string = '';
 
-    if (fieldNode.options && fieldNode.options['error'] && fieldNode.options['error'][type]) {
+    if ( (fieldNode.options['error'] && fieldNode.options['error'][type]) || fieldNode.options['errorTranslate']) {
       errorMessage = fieldNode.options['error'][type];
+    } else if (this.formNode.config.autoErrors) {
+      errorMessage = `${this.formNode.config.localePrefix}errors.${type}`;
     } else {
       if (fieldNode.options.translate) {
         errorMessage = `error.form.${type}`;
@@ -145,13 +149,22 @@ export class FormComponent implements OnInit, OnDestroy {
 
   public onOpenDialog(event, fieldNode: FieldNode, options: FormTypeOptions, parent ?: FieldNode): void {
     const data: any = this.formNode.form.get(fieldNode.name).value || {};
+    const config = this.formNode.config;
+    let dialogConfig = {};
+    if (fieldNode.options['model'] && fieldNode.options['model']['_config']) {
+      dialogConfig = fieldNode.options['model']['_config'];
+    }
+    if (config.childrenConfig && config.childrenConfig[fieldNode.name]) {
+      dialogConfig = {...dialogConfig, ...config.childrenConfig[fieldNode.name]};
+    }
     const dialogRef = this.dialog.open(DialogComponent, {
       width: options['dialog'] && options['dialog'].widows ? options['dialog'].widows : '480px',
       scrollStrategy: this.overlay.scrollStrategies.noop(),
       data: {
         fieldNode: fieldNode,
         options: options,
-        data: data
+        data: data,
+        config: dialogConfig
       }
     });
     this.subscription.add(dialogRef.afterClosed().subscribe(result => {
@@ -160,7 +173,7 @@ export class FormComponent implements OnInit, OnDestroy {
       } else {
         // this.form.get('client').setValue(null);
       }
-      if (parent) {
+      if (parent && result) {
         parent.options.choices.push(result);
         // this.formNode.updateOptions(parent.name, parent.options);
         parent.control.setValue(result[parent.options['mappedId']]);

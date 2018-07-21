@@ -1,4 +1,5 @@
 import { FormTypeOptions } from '../types/form-type';
+import { FormNodeConfig } from './form-node';
 
 /**
  * FormField
@@ -12,5 +13,5 @@ export interface FormField {
  * FormModel
  */
 export interface FormModel {
-  [key: string]: FormField;
+  [key: string]: (FormField | FormNodeConfig);
 }

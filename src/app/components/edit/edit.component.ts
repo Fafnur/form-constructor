@@ -27,7 +27,7 @@ export class EditComponent implements OnInit, OnDestroy {
                      public snackBar: MatSnackBar) {
     this.subscription = new Subscription();
     this.formNode = this.fc.create(UserModel, {
-      formName: 'user.form.'
+      excludedFields: ['id']
     });
     this.submitted = false;
   }
