@@ -48,3 +48,23 @@
     left: 0;
   }
 }
+
+.select-dialog {
+  position: relative;
+
+  /deep/ .mat-form-field-wrapper {
+    width: calc(100% - 160px);
+  }
+
+  .select-dialog-button {
+    position: absolute;
+    right: 0;
+    top: 0.85rem;
+  }
+
+  .select-dialog-button /deep/ .mat-raised-button,
+  .select-dialog-button /deep/ .mat-button {
+    width: 150px;
+  }
+}
+

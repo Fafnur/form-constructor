@@ -9,6 +9,7 @@ import { FormField, FormModel } from './form-model';
 export class FieldNode {
   // [key: string]: any;
   public name: string;
+  public nodeName: string;
   public model: FormField;
   public multiLanguage: boolean;
   public options: FormTypeOptions;
@@ -243,6 +244,7 @@ export class FormNode implements FormNodeInterface {
     component.type = type;
     component.model = <FormField>this.model[name];
     component.name = fieldName;
+    component.nodeName = isMulti ? fieldName.substr(0, fieldName.indexOf('_', pos)) : fieldName.substr(pos);
     component.control = this.form.get(fieldName);
 
     return component;

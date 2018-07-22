@@ -1,9 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
+import { FormModel } from '../../models/form-model';
 import { FieldNode, FormNode, FormNodeConfig } from '../../models/form-node';
-import { FormConstructorService } from '../../services/form-constructor.service';
 import { FormTypeOptions } from '../../types/form-type';
+import { Guid } from '../../utils/guid';
 
 export interface FCDialogOptions {
   fieldNode: FieldNode;
@@ -18,22 +19,17 @@ export interface FCDialogOptions {
   styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent implements OnInit, OnDestroy {
+  public formModel: FormModel;
   public formNode: FormNode;
+  public formNodeConfig: FormNodeConfig;
+  // @ViewChild('dialogForm') dialogForm: FormComponent;
 
   public constructor(private dialogRef: MatDialogRef<DialogComponent>,
-                     @Inject(MAT_DIALOG_DATA) public dialogData: FCDialogOptions,
-                     private fc: FormConstructorService) {
+                     @Inject(MAT_DIALOG_DATA) public dialogData: FCDialogOptions) {
 
     const options = this.dialogData.fieldNode.options;
-    this.formNode = this.fc.create(options['model'], this.dialogData.config);
-    if (options['configOptions']) {
-      for (const key of Object.keys(options['configOptions'])) {
-        this.formNode.updateOptions(key, options['configOptions'][key]);
-      }
-    }
-    if (this.dialogData.data) {
-      this.formNode.setData(this.dialogData.data);
-    }
+    this.formModel = options['model'];
+    this.formNodeConfig = this.dialogData.config;
   }
 
   public ngOnInit(): void {
@@ -43,10 +39,31 @@ export class DialogComponent implements OnInit, OnDestroy {
   }
 
   public onSave(event): void {
-    this.dialogRef.close(this.formNode.getData());
+    const data = this.formNode.getData();
+    if (!data['id']) {
+      data['id'] = `_${Guid.v4()}`;
+    }
+    this.dialogRef.close(data);
   }
 
   public onCancel(event): void {
     this.dialogRef.close();
+  }
+
+  public onCreated(formNode: FormNode): void {
+    this.formNode = formNode;
+    this.setData();
+  }
+
+  private setData(): void {
+    const options = this.dialogData.fieldNode.options;
+    if (options['configOptions']) {
+      for (const key of Object.keys(options['configOptions'])) {
+        this.formNode.updateOptions(key, options['configOptions'][key]);
+      }
+    }
+    if (this.dialogData.data) {
+      this.formNode.setData(this.dialogData.data);
+    }
   }
 }
