@@ -2,7 +2,8 @@
   <ng-container *ngIf="component.options.translate">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" [readonly]="component.options.readOnly">
+             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+             [readonly]="component.options.readOnly">
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
       <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
         {{ getErrorMessage('pattern', component) | translate }}
@@ -15,7 +16,8 @@
   <ng-container *ngIf="!component.options.translate">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <input matInput placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" [readonly]="component.options.readOnly">
+             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+             [readonly]="component.options.readOnly">
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
       <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
         {{ getErrorMessage('pattern', component) }}
@@ -27,11 +29,12 @@
   </ng-container>
 </ng-template>
 
-<ng-template #textareaTemplate let-component="fieldNode" let-config="formConfig"  let-form="formNode">
+<ng-template #textareaTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
   <ng-container *ngIf="component.options.translate">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <textarea matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
-                [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" [readonly]="component.options.readOnly">
+                [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+                [readonly]="component.options.readOnly">
       </textarea>
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
       <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
@@ -45,7 +48,8 @@
   <ng-container *ngIf="!component.options.translate">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <textarea matInput placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
-                [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" [readonly]="component.options.readOnly"></textarea>
+                [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+                [readonly]="component.options.readOnly"></textarea>
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
       <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
         {{ getErrorMessage('pattern', component) }}
@@ -57,11 +61,13 @@
   </ng-container>
 </ng-template>
 
-<ng-template #datepickerTemplate let-component="fieldNode" let-config="formConfig"  let-form="formNode">
+<ng-template #datepickerTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
   <ng-container *ngIf="component.options.translate">
     <mat-form-field class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-      <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" [readonly]="component.options.readOnly">
+      <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}"
+             [formControl]="component.control"
+             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+             [readonly]="component.options.readOnly">
       <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
       <mat-datepicker #datepicker></mat-datepicker>
       <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
@@ -74,8 +80,10 @@
   </ng-container>
   <ng-container *ngIf="!component.options.translate">
     <mat-form-field class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-      <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" [readonly]="component.options.readOnly">
+      <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) }}"
+             [formControl]="component.control"
+             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+             [readonly]="component.options.readOnly">
       <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
       <mat-datepicker #datepicker></mat-datepicker>
       <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
@@ -88,10 +96,13 @@
   </ng-container>
 </ng-template>
 
-<ng-template #radioTemplate let-component="fieldNode" let-config="formConfig"  let-form="formNode">
-  <div class="field-group field-choices field-radio {{ getFieldValue('radioWrapper', 'classes', component, '') }}" [ngClass]="{'mat-form-field-invalid': component.control.hasError('required')}">
+<ng-template #radioTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <div class="field-group field-choices field-radio {{ getFieldValue('radioWrapper', 'classes', component, '') }}"
+       [ngClass]="{'mat-form-field-invalid': component.control.hasError('required')}">
     <ng-container *ngIf="component.options['title']">
-      <div class="field-label {{ getFieldValue('title', 'classes', component, '') }}">{{ getFieldValue('title', 'value', component, '') | translate }}</div>
+      <div class="field-label {{ getFieldValue('title', 'classes', component, '') }}">{{ getFieldValue('title', 'value',
+        component, '') | translate }}
+      </div>
     </ng-container>
     <ng-container *ngIf="component.options.translate">
       <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
@@ -101,15 +112,17 @@
           </ng-container>
           <ng-container *ngIf="component.options['choices']">
             <ng-container *ngFor="let choice of component.options['choices']">
-              <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{ choice.label | translate  }}</mat-radio-button>
+              <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{
+                choice.label | translate }}
+              </mat-radio-button>
             </ng-container>
           </ng-container>
         </mat-radio-group>
         <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-          {{ getErrorMessage('pattern', component) | translate  }}
+          {{ getErrorMessage('pattern', component) | translate }}
         </mat-error>
         <mat-error *ngIf="component.control.hasError('required')">
-          {{ getErrorMessage('required', component) | translate  }}
+          {{ getErrorMessage('required', component) | translate }}
         </mat-error>
       </div>
     </ng-container>
@@ -121,7 +134,9 @@
           </ng-container>
           <ng-container *ngIf="component.options['choices']">
             <ng-container *ngFor="let choice of component.options['choices']">
-              <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{ choice.label }}</mat-radio-button>
+              <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{
+                choice.label }}
+              </mat-radio-button>
             </ng-container>
           </ng-container>
         </mat-radio-group>
@@ -136,10 +151,13 @@
   </div>
 </ng-template>
 
-<ng-template #checkboxTemplate let-component="fieldNode" let-config="formConfig"  let-formComponen="formNode">
-  <div class="field-group field-choices field-checkbox {{ getFieldValue('radioWrapper', 'classes', component, '') }}" [ngClass]="{'mat-form-field-invalid': component.control.hasError('required')}">
+<ng-template #checkboxTemplate let-component="fieldNode" let-config="formConfig" let-formComponen="formNode">
+  <div class="field-group field-choices field-checkbox {{ getFieldValue('radioWrapper', 'classes', component, '') }}"
+       [ngClass]="{'mat-form-field-invalid': component.control.hasError('required')}">
     <ng-container *ngIf="component.options['title']">
-      <div class="field-label {{ getFieldValue('title', 'classes', component, '') }}">{{ getFieldValue('title', 'value', component, '') | translate }}</div>
+      <div class="field-label {{ getFieldValue('title', 'classes', component, '') }}">{{ getFieldValue('title', 'value',
+        component, '') | translate }}
+      </div>
     </ng-container>
     <ng-container *ngIf="component.options.translate">
       <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
@@ -148,14 +166,17 @@
         </ng-container>
         <ng-container *ngIf="component.options['choices']">
           <ng-container *ngFor="let choice of component.options['choices']; let i = index;">
-            <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}" [checked]="choice.selected" (change)="onSelectCheckbox(component, choice, $event)">{{ choice.label | translate }}</mat-checkbox>
+            <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}"
+                          [checked]="choice.selected" (change)="onSelectCheckbox(component, choice, $event)">{{
+              choice.label | translate }}
+            </mat-checkbox>
           </ng-container>
         </ng-container>
         <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-          {{ getErrorMessage('pattern', component) | translate  }}
+          {{ getErrorMessage('pattern', component) | translate }}
         </mat-error>
         <mat-error *ngIf="component.control.hasError('required')">
-          {{ getErrorMessage('required', component) | translate  }}
+          {{ getErrorMessage('required', component) | translate }}
         </mat-error>
       </div>
     </ng-container>
@@ -166,8 +187,10 @@
         </ng-container>
         <ng-container *ngIf="component.options['choices']">
           <ng-container *ngFor="let choice of component.options['choices'];">
-            <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}" [checked]="choice.selected"
-                          (change)="onSelectCheckbox(component, choice, $event)">{{ choice.label }}</mat-checkbox>
+            <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}"
+                          [checked]="choice.selected"
+                          (change)="onSelectCheckbox(component, choice, $event)">{{ choice.label }}
+            </mat-checkbox>
           </ng-container>
         </ng-container>
         <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
@@ -181,8 +204,9 @@
   </div>
 </ng-template>
 
-<ng-template #selectTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-language="language">
-  <div *ngIf="component.options.translate" [ngClass]="{'select-dialog': component.options['dialog']}">
+<ng-template #selectTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode"
+             let-language="language">
+  <div *ngIf="component.options.translate" [ngClass]="{'select-dialog': component.options['dialog'], 'select-expansion-panel': component.options['expansionPanel']}">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <mat-select placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
                   [required]="config.required" [errorStateMatcher]="matcher">
@@ -199,11 +223,16 @@
       </mat-error>
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
     </mat-form-field>
-    <div class="select-dialog-button" *ngIf="component.options['dialog']">
-      <ng-container *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
+    <div class="select-action-button" *ngIf="component.options['dialog']">
+      <ng-container
+        *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
+    </div>
+    <div class="" *ngIf="component.options['expansionPanel']">
+      <ng-container
+        *ngTemplateOutlet="getTemplate(component.options['expansionPanel'], expansionPanelTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
     </div>
   </div>
-  <div *ngIf="!component.options.translate" [ngClass]="{'select-dialog': component.options['dialog']}">
+  <div *ngIf="!component.options.translate" [ngClass]="{'select-dialog': component.options['dialog'], 'select-expansion-panel': component.options['expansionPanel']}">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <mat-select placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
                   [required]="config.required" [errorStateMatcher]="matcher" [disabled]="!!component.options.disabled">
@@ -216,24 +245,31 @@
         {{ getErrorMessage('pattern', component) }}
       </mat-error>
       <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component)  }}
+        {{ getErrorMessage('required', component) }}
       </mat-error>
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
     </mat-form-field>
-    <div class="select-dialog-button"  *ngIf="component.options['dialog']">
-      <ng-container *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
+    <div class="select-action-button" *ngIf="component.options['dialog']">
+      <ng-container
+        *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
+    </div>
+    <div class="select-action-button" *ngIf="component.options['expansionPanel']">
+      <ng-container
+        *ngTemplateOutlet="getTemplate(component.options['expansionPanel'], expansionPanelTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
     </div>
   </div>
 </ng-template>
 
 <ng-template #dialogTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-parent="parent">
   <ng-container *ngIf="component.options.translate">
-    <button type="button" mat-raised-button color="{{ component.options.button.color }}" (click)="onOpenDialog($event, component, config, parent)">
+    <button type="button" mat-raised-button color="{{ component.options.button.color }}"
+            (click)="onOpenDialog($event, component, config, parent)">
       {{ (component.options.button.label || component.name) | translate }}
     </button>
   </ng-container>
   <ng-container *ngIf="!component.options.translate">
-    <button type="button" mat-raised-button color="{{ component.options.button.color }}" (click)="onOpenDialog($event, component, config, parent)">
+    <button type="button" mat-raised-button color="{{ component.options.button.color }}"
+            (click)="onOpenDialog($event, component, config, parent)">
       {{ (component.options.button.label || component.name) | translate }}
     </button>
   </ng-container>
@@ -242,15 +278,19 @@
 <ng-template #boolTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
   <ng-container *ngIf="component.options.translate">
     <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
-      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{ component.options.label | translate }}</mat-checkbox>
+      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{
+        component.options.label | translate }}
+      </mat-checkbox>
       <mat-error *ngIf="component.control.hasError('required') && !component.control.value">
-        {{ getErrorMessage('required', component) | translate  }}
+        {{ getErrorMessage('required', component) | translate }}
       </mat-error>
     </div>
   </ng-container>
   <ng-container *ngIf="!component.options.translate">
     <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
-      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{ component.options.label }}</mat-checkbox>
+      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{
+        component.options.label }}
+      </mat-checkbox>
       <mat-error *ngIf="component.control.hasError('required')">
         {{ getErrorMessage('required', component) }}
       </mat-error>
@@ -258,8 +298,35 @@
   </ng-container>
 </ng-template>
 
-<ng-template #imageTemplate let-component="fieldNode" let-config="formConfig"  let-form="formNode">
-  <div> imageTemplate </div>
+<ng-template #expansionPanelTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-params="params" let-parent="parent">
+  <ng-container *ngIf="component.options.translate">
+    <button class="select-toggle-button" type="button" mat-raised-button color="{{ component.options.button.color }}"
+            (click)="onToggleExpansionPanel($event, component, parent)">
+      {{ (component.options.button.label || component.name || 'actions.open') | translate }}
+    </button>
+    <mat-expansion-panel [expanded]="isExpansionPanel(component, parent)">
+      <fc-form [formModel]="component.options['model']" [formNodeConfig]="component.options['formNodeConfig']" (created)="onExpansionPanelFormCreated($event, component, parent)"></fc-form>
+      <mat-action-row>
+        <button mat-raised-button (click)="onSaveExpansionPanel($event, component, parent)">{{ getFieldValue('action', 'label', component, 'actions.save', false) | translate }}</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </ng-container>
+  <ng-container *ngIf="!component.options.translate">
+    <button class="select-toggle-button" type="button" mat-raised-button color="{{ component.options.button.color }}"
+            (click)="onToggleExpansionPanel($event, component)">
+      {{ (component.options.button.label || component.name || 'actions.open') }}
+    </button>
+    <mat-expansion-panel [expanded]="isExpansionPanel(component, parent)">
+      <fc-form [formModel]="component.options['model']" [formNodeConfig]="component.options['formNodeConfig']" (created)="onExpansionPanelFormCreated($event, component, parent)"></fc-form>
+      <mat-action-row>
+        <button mat-raised-button (click)="onSaveExpansionPanel($event, component, parent)">{{ getFieldValue('action', 'label', component, 'actions.save', false) }}</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </ng-container>
+</ng-template>
+
+<ng-template #imageTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <div> imageTemplate</div>
 </ng-template>
 
 <div *ngIf="formNode" [formGroup]="formNode.form">
@@ -269,31 +336,44 @@
         <ng-container *ngFor="let control of getComponents(1)">
           <div [ngSwitch]="control.type">
             <div *ngSwitchCase="'text'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'textarea'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, textareaTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, textareaTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'datepicker'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, datepickerTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, datepickerTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'radio'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, radioTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, radioTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'checkbox'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, checkboxTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, checkboxTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'dialog'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, dialogTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, dialogTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'bool'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'image'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
             <div *ngSwitchCase="'select'">
-              <ng-container *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name, language)"></ng-container>
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name, language)"></ng-container>
+            </div>
+            <div *ngSwitchCase="'expansionPanel'">
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, expansionPanelTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
           </div>
         </ng-container>
@@ -303,31 +383,44 @@
   <ng-container *ngFor="let control of getComponents(0)">
     <div [ngSwitch]="control.type">
       <div *ngSwitchCase="'text'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'textarea'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, textareaTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, textareaTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'datepicker'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, datepickerTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, datepickerTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'radio'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, radioTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, radioTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'checkbox'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, checkboxTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, checkboxTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'dialog'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, dialogTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, dialogTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'bool'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'image'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, imageTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'select'">
-        <ng-container *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name)"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div *ngSwitchCase="'expansionPanel'">
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, expansionPanelTemplate); context: getContext(control.name)"></ng-container>
       </div>
     </div>
   </ng-container>

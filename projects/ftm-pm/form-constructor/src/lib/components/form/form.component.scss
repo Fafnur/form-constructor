@@ -49,22 +49,36 @@
   }
 }
 
-.select-dialog {
+.select-dialog,
+.select-expansion-panel {
   position: relative;
 
-  /deep/ .mat-form-field-wrapper {
+  & > .form-field > /deep/ .mat-form-field-wrapper {
     width: calc(100% - 160px);
   }
 
-  .select-dialog-button {
+  .select-action-button {
     position: absolute;
     right: 0;
     top: 0.85rem;
   }
 
-  .select-dialog-button /deep/ .mat-raised-button,
-  .select-dialog-button /deep/ .mat-button {
+  .select-action-button /deep/ .mat-raised-button,
+  .select-action-button /deep/ .mat-button {
     width: 150px;
   }
 }
 
+.select-expansion-panel {
+  .select-toggle-button {
+    position: absolute;
+    right: 0;
+    top: 0.85rem;
+    width: 150px;
+  }
+
+  .mat-expansion-panel {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+}

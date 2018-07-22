@@ -9,6 +9,9 @@ import { User, UserModel } from '../../models/user';
 import { UserService } from '../../services/user.service';
 import { NotificationComponent } from '../notification/notification.component';
 import { FormGroup } from '@angular/forms';
+import { Client } from '../../models/client';
+import { ClientModel } from '../../models/client';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-edit',
@@ -30,6 +33,8 @@ export class EditComponent implements OnInit, OnDestroy {
                      public snackBar: MatSnackBar) {
     this.subscription = new Subscription();
     this.formModel = UserModel;
+    this.formModel['client']['options']['expansionPanel']['options']['button']['label'] = 'actions.edit';
+
     this.formNodeConfig = {
       excludedFields: ['id'],
       childrenConfig: {
@@ -78,7 +83,6 @@ export class EditComponent implements OnInit, OnDestroy {
   public onSubmit(event): void {
     const user: User = {...this.user, ...<User> this.formNode.getData()};
     user.id = this.user.id;
-    console.log(user);
     this.submitted = true;
     this.subscription.add(this.userService.put(user).subscribe(response => {
       if (response instanceof HttpErrorResponse) {

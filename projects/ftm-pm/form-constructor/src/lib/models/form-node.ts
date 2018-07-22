@@ -17,6 +17,8 @@ export class FieldNode {
   public language ?: string;
   public type: FormTypeInterface;
   public data: any;
+  public openPanel ?: boolean;
+  public formNode ?: any;
 }
 
 /**
