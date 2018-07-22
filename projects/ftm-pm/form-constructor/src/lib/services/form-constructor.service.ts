@@ -60,8 +60,9 @@ export class FormConstructorService implements FormConstructorInterface {
         });
       } else {
         config[fieldName] = this.getFieldConfig(fieldName, type);
-        if (types[fieldName].type === 'select' && fieldOptions['dialog']) {
-          const fieldDialog = fieldOptions['dialog'];
+        if (types[fieldName].type === 'select' && (fieldOptions['dialog'] || fieldOptions['expansionPanel'])) {
+          const subType = fieldOptions['dialog'] ? 'dialog' : 'expansionPanel';
+          const fieldDialog = fieldOptions[subType];
           const fieldDialogName: string = `_${types[fieldName].type}_${fieldName}`;
           types[fieldDialogName] = FormTypeFactory.create(fieldDialog.type, fieldDialogName, fieldDialog.options || {});
           config[fieldDialogName] = this.getFieldConfig(fieldDialogName, types[fieldDialogName]);

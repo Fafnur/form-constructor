@@ -8,6 +8,7 @@ import { FormModel } from '../../models/form-model';
 import { FieldNode, FormNode, FormNodeConfig } from '../../models/form-node';
 import { FormConstructorService } from '../../services/form-constructor.service';
 import { FormTypeInterface, FormTypeOptions } from '../../types/form-type';
+import { Guid } from '../../utils/guid';
 import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
@@ -22,13 +23,17 @@ export class FormComponent implements OnInit, OnDestroy {
   @Input() public parentFormNode: FormNode;
   public formNode: FormNode;
   private subscription: Subscription;
+  private forms: Object = {};
+  private toggles: Object = {};
   @Output() private created: EventEmitter<FormNode>;
+  @Output() private childChanged: EventEmitter<any>;
 
   public constructor(public dialog: MatDialog,
                      public overlay: Overlay,
                      public fc: FormConstructorService) {
     this.subscription = new Subscription();
     this.created = new EventEmitter<FormNode>();
+    this.childChanged = new EventEmitter<any>();
   }
 
   public ngOnInit(): void {
@@ -82,19 +87,25 @@ export class FormComponent implements OnInit, OnDestroy {
       formConfig: this.formNode.config,
       fieldNode: this.formNode.getFieldNode(name),
       language: language,
-      parent: parent
+      parent: parent,
+      params: {},
     };
   }
 
-  public getFieldValue(type: string, value: string, fieldNode: FieldNode, defaultValue: any = null) {
-    let fieldValue: any = defaultValue;
+  public getFieldValue(type: string, value: string, fieldNode: FieldNode, defaultValue: any = null, isTranslate: boolean = true) {
+    let fieldValue: any;
 
     if (fieldNode.options && fieldNode.options[type] && fieldNode.options[type][value]) {
       fieldValue = fieldNode.options[type][value];
+    }
+
+    if (!fieldValue && defaultValue) {
+      fieldValue = defaultValue;
     } else {
       fieldValue = fieldNode.name;
     }
-    if (fieldNode.options.translate) {
+
+    if (fieldNode.options.translate && isTranslate) {
       fieldValue = this.formNode.config.localePrefix + fieldValue;
     }
 
@@ -191,5 +202,50 @@ export class FormComponent implements OnInit, OnDestroy {
         }
       }
     }));
+  }
+
+  public onToggleExpansionPanel(event, fieldNode: FieldNode, parent?: FieldNode): void {
+    const key: string = `${parent.name}_${fieldNode.name}`;
+    if (this.toggles.hasOwnProperty(key)) {
+      this.toggles[key] = !this.toggles[key];
+    } else {
+      this.toggles[key] = !fieldNode.options['openPanel'];
+    }
+    if (parent) {
+      const value = parent.control.value;
+      const data = parent.options.choices.filter(item => item[parent.options['mappedId']] === value)[0];
+      const formNode = this.forms[`${parent.name}_${fieldNode.name}`];
+      formNode.setData(data);
+    }
+  }
+
+  public isExpansionPanel(fieldNode: FieldNode, parent?: FieldNode): boolean {
+    return this.toggles[`${parent.name}_${fieldNode.name}`] != null ? this.toggles[`${parent.name}_${fieldNode.name}`] : fieldNode.options['openPanel'];
+  }
+
+  public onExpansionPanelFormCreated(formNode: FormNode, fieldNode: FieldNode, parent?: FieldNode): void {
+    const data: any = this.formNode.form.get(fieldNode.name).value || {};
+    this.forms[`${parent.name}_${fieldNode.name}`] = formNode;
+    formNode.setData(data);
+  }
+
+  public onSaveExpansionPanel(event, fieldNode: FieldNode, parent?: FieldNode): void {
+    const formNode = this.forms[`${parent.name}_${fieldNode.name}`];
+    const data: any = {...this.formNode.form.get(fieldNode.name).value || {}, ...formNode.getData()};
+    if (!data['id']) {
+      data['id'] = `_${Guid.v4()}`;
+    }
+    const resultData = typeof fieldNode.options['reverseTransform'] === 'function' ? fieldNode.options['reverseTransform'](data) : data;
+
+    this.formNode.form.get(fieldNode.name).setValue(resultData);
+    if (parent) {
+      parent.options.choices.push(resultData);
+      // this.formNode.updateOptions(parent.name, parent.options);
+      parent.control.setValue(resultData[parent.options['mappedId']]);
+      if (fieldNode.options['autoClosed']) {
+        this.onToggleExpansionPanel(null, fieldNode, parent);
+      }
+    }
+    this.childChanged.emit(resultData);
   }
 }

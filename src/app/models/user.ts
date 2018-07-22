@@ -1,5 +1,14 @@
 import { Validators } from '@angular/forms';
-import { DialogType, FormModel, NodeCell, RadioType, SelectType, TextType, transformList } from 'ftm-pm/form-constructor';
+import {
+  DialogType,
+  ExpansionPanelType,
+  FormModel,
+  NodeCell,
+  RadioType,
+  SelectType,
+  TextType,
+  transformList
+} from 'ftm-pm/form-constructor';
 
 import { TimestampableRestEntity } from './rest-entity';
 import { CurrencyChoices } from './currency';
@@ -85,18 +94,23 @@ export const UserModel: FormModel = {
       mapped: 'fullName',
       mappedId: 'id',
       choices: [],
-      dialog: {
-        type: DialogType,
+      expansionPanel: {
+        type: ExpansionPanelType,
         options: {
           validators: [],
           button: {
             label: 'actions.create',
             color: 'primary'
           },
+          openPanel: true,
           model: ClientModel,
+          autoClosed: true,
+          formNodeConfig: {
+            excludedFields: ['id']
+          },
           reverseTransform: (data: any): any => Object.assign(new Client(), data)
         }
-      },
+      }
     }
   },
   email: {
@@ -179,7 +193,7 @@ export const UserModel: FormModel = {
  * UserList
  */
 export const UserList: NodeCell[] = transformList([
-  { columnDef: 'number', type: 'index', header: 'number', usePrefix: true },
+  {columnDef: 'number', type: 'index', header: 'number', usePrefix: true},
   'id',
   'lastname',
   'firstname',

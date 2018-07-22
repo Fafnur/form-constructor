@@ -4,6 +4,7 @@
 
 // Models
 import { DialogType } from './lib/types/dialog-type';
+import { ExpansionPanelType } from './lib/types/expansion-panel-type';
 
 export { FormNode, FieldNode, FormNodeConfig, FormNodeChildrenConfig, FormNodeInterface } from './lib/models/form-node';
 export { FormField, FormModel } from './lib/models/form-model';
@@ -29,6 +30,7 @@ export { BoolType } from './lib/types/bool-type';
 export { CheckboxType } from './lib/types/checkbox-type';
 export { DialogType } from './lib/types/dialog-type';
 export { DatepickerType } from './lib/types/datepicker-type';
+export { ExpansionPanelType } from './lib/types/expansion-panel-type';
 export { RadioType } from './lib/types/radio-type';
 export { TextType } from './lib/types/text-type';
 export { TextareaType } from './lib/types/textarea-type';
