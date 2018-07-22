@@ -1,10 +1,12 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { Component, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 
 import { ErrorStateMatcher } from '../../matchers/error-state.matcher';
-import { FieldNode, FormNode } from '../../models/form-node';
+import { FormModel } from '../../models/form-model';
+import { FieldNode, FormNode, FormNodeConfig } from '../../models/form-node';
+import { FormConstructorService } from '../../services/form-constructor.service';
 import { FormTypeInterface, FormTypeOptions } from '../../types/form-type';
 import { DialogComponent } from '../dialog/dialog.component';
 
@@ -15,15 +17,26 @@ import { DialogComponent } from '../dialog/dialog.component';
 })
 export class FormComponent implements OnInit, OnDestroy {
   public matcher: ErrorStateMatcher = new ErrorStateMatcher();
-  @Input() public formNode: FormNode;
+  @Input() public formModel: FormModel;
+  @Input() public formNodeConfig: FormNodeConfig;
+  @Input() public parentFormNode: FormNode;
+  public formNode: FormNode;
   private subscription: Subscription;
+  @Output() private created: EventEmitter<FormNode>;
 
   public constructor(public dialog: MatDialog,
-                     public overlay: Overlay) {
+                     public overlay: Overlay,
+                     public fc: FormConstructorService) {
     this.subscription = new Subscription();
+    this.created = new EventEmitter<FormNode>();
   }
 
   public ngOnInit(): void {
+    if (!this.formModel) {
+      throw new Error('Model is not found');
+    }
+    this.formNode = this.fc.create(this.formModel, this.formNodeConfig || {});
+    this.created.emit(this.formNode);
   }
 
   public ngOnDestroy(): void {
@@ -154,8 +167,8 @@ export class FormComponent implements OnInit, OnDestroy {
     if (fieldNode.options['model'] && fieldNode.options['model']['_config']) {
       dialogConfig = fieldNode.options['model']['_config'];
     }
-    if (config.childrenConfig && config.childrenConfig[fieldNode.name]) {
-      dialogConfig = {...dialogConfig, ...config.childrenConfig[fieldNode.name]};
+    if (config.childrenConfig && config.childrenConfig[fieldNode.nodeName]) {
+      dialogConfig = {...dialogConfig, ...config.childrenConfig[fieldNode.nodeName]};
     }
     const dialogRef = this.dialog.open(DialogComponent, {
       width: options['dialog'] && options['dialog'].widows ? options['dialog'].widows : '480px',
@@ -169,14 +182,13 @@ export class FormComponent implements OnInit, OnDestroy {
     });
     this.subscription.add(dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.formNode.form.get(fieldNode.name).setValue(result);
-      } else {
-        // this.form.get('client').setValue(null);
-      }
-      if (parent && result) {
-        parent.options.choices.push(result);
-        // this.formNode.updateOptions(parent.name, parent.options);
-        parent.control.setValue(result[parent.options['mappedId']]);
+        const resultData = typeof fieldNode.options['reverseTransform'] === 'function' ? fieldNode.options['reverseTransform'](result) : result;
+        this.formNode.form.get(fieldNode.name).setValue(resultData);
+        if (parent) {
+          parent.options.choices.push(resultData);
+          // this.formNode.updateOptions(parent.name, parent.options);
+          parent.control.setValue(resultData[parent.options['mappedId']]);
+        }
       }
     }));
   }

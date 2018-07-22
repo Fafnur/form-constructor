@@ -182,7 +182,7 @@
 </ng-template>
 
 <ng-template #selectTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-language="language">
-  <ng-container *ngIf="component.options.translate">
+  <div *ngIf="component.options.translate" [ngClass]="{'select-dialog': component.options['dialog']}">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <mat-select placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
                   [required]="config.required" [errorStateMatcher]="matcher">
@@ -199,11 +199,11 @@
       </mat-error>
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
     </mat-form-field>
-    <ng-container *ngIf="component.options['dialog']">
+    <div class="select-dialog-button" *ngIf="component.options['dialog']">
       <ng-container *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
-    </ng-container>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
+    </div>
+  </div>
+  <div *ngIf="!component.options.translate" [ngClass]="{'select-dialog': component.options['dialog']}">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <mat-select placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
                   [required]="config.required" [errorStateMatcher]="matcher" [disabled]="!!component.options.disabled">
@@ -220,7 +220,10 @@
       </mat-error>
       <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
     </mat-form-field>
-  </ng-container>
+    <div class="select-dialog-button"  *ngIf="component.options['dialog']">
+      <ng-container *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
+    </div>
+  </div>
 </ng-template>
 
 <ng-template #dialogTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-parent="parent">
@@ -259,7 +262,7 @@
   <div> imageTemplate </div>
 </ng-template>
 
-<div *ngIf="formNode">
+<div *ngIf="formNode" [formGroup]="formNode.form">
   <ng-container *ngIf="formNode.config.multiLanguage">
     <mat-tab-group>
       <mat-tab label="{{language}}" *ngFor="let language of formNode.languages;">

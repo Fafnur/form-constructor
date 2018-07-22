@@ -93,7 +93,8 @@ export const UserModel: FormModel = {
             label: 'actions.create',
             color: 'primary'
           },
-          model: ClientModel
+          model: ClientModel,
+          reverseTransform: (data: any): any => Object.assign(new Client(), data)
         }
       },
     }
