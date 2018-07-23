@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource, PageEvent } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import * as moment_ from 'moment/moment';
 
 const moment = moment_;
 
 export interface ListConfig {
   responsive?: boolean;
-  sort?: boolean;
+  isSort?: boolean;
+  fullSort?: boolean;
   pageSizeOptions?: number[];
   count?: number;
   pageSize?: number;
@@ -14,6 +15,9 @@ export interface ListConfig {
   translatePrefix?: string;
   columns?: string[];
   filter?: boolean;
+  sort ?: string;
+  sorts ?: string[];
+  direction ?: string;
 }
 
 export interface NodeCell {
@@ -110,8 +114,8 @@ export class ListComponent implements OnInit, OnChanges {
   public dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
   @ViewChild(MatSort) private sort: MatSort;
-  @Output() private clickedItem = new EventEmitter();
-  @Output() private pageEvent = new EventEmitter<PageEvent>();
+  @Output() private sorted: EventEmitter<Sort> = new EventEmitter<Sort>();
+  @Output() private pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   public ngOnInit() {
     this.config = {
@@ -119,7 +123,8 @@ export class ListComponent implements OnInit, OnChanges {
         count: 0,
         responsive: true,
         filter: true,
-        sort: false,
+        isSort: true,
+        fullSort: false,
         pageSizeOptions: [5, 10, 15, 25],
         pageSize: 10,
         pageIndex: 0,
@@ -135,7 +140,9 @@ export class ListComponent implements OnInit, OnChanges {
       // this.dataSource.paginator.pageSize = this.config.pageSize;
       // this.dataSource.paginator.pageIndex = this.config.pageIndex;
       // this.dataSource.paginator.length = 122;
-      this.dataSource.sort = this.sort;
+      if (!this.config.fullSort) {
+        this.dataSource.sort = this.sort;
+      }
     }
   }
 
@@ -154,10 +161,6 @@ export class ListComponent implements OnInit, OnChanges {
     this.pageEvent.emit(event);
   }
 
-  public viewItem(guid): void {
-    this.clickedItem.emit(guid);
-  }
-
   public getIndex(i): void {
     return i + 1 + (this.config.pageIndex > 0 ? this.config.pageIndex - 1 : 0) * this.config.pageSize;
   }
@@ -170,5 +173,11 @@ export class ListComponent implements OnInit, OnChanges {
       action = column.usePrefix;
     }
     return action ? `${this.config.translatePrefix}${header}` : header;
+  }
+
+  public sortData(sort: Sort): void {
+    this.paginator.firstPage();
+    // this.dataSource.paginator.pageIndex = 0;
+    this.sorted.emit(sort);
   }
 }

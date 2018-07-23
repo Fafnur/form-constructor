@@ -2,7 +2,7 @@
   <h3>{{ 'user.list.title' | translate }}</h3>
   <mat-card>
     <div class="table-responsive">
-      <fc-list [(data)]="users" [nodeList]="nodeList" [config]="tableConfig"
+      <fc-list [(data)]="users" [nodeList]="nodeList" [config]="tableConfig" (sorted)="onSorted($event)"
                (pageEvent)="onPaginate($event)">
       </fc-list>
     </div>
