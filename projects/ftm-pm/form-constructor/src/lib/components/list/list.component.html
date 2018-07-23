@@ -6,7 +6,7 @@
     </mat-form-field>
   </ng-container>
   <div [ngClass]="{'table-responsive': config.responsive}">
-    <table mat-table #table [dataSource]="dataSource" matSort>
+    <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
       <ng-container *ngFor="let column of nodeList; let i=index;" [matColumnDef]="column.columnDef">
         <ng-container [ngSwitch]="column.type">
           <div *ngSwitchCase="'actions'">

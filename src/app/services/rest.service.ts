@@ -57,7 +57,7 @@ export abstract class RestService<T extends RestEntity> {
     let params = new HttpParams();
     for (const propKey in search) {
       if (propKey !== 'sort') {
-        if (search.hasOwnProperty(propKey) && search[propKey]) {
+        if (search.hasOwnProperty(propKey) && search[propKey] !== undefined) {
           params = params.append(propKey, search[propKey].toString());
         }
       }
