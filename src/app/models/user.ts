@@ -193,6 +193,10 @@ export const UserModel: FormModel = {
  * UserList
  */
 export const UserList: NodeCell[] = transformList([
+  {
+    type: 'config',
+    translatePrefix: 'user.form.'
+  },
   {columnDef: 'number', type: 'index', header: 'number', usePrefix: true},
   'id',
   'lastname',

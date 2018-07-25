@@ -11,6 +11,7 @@ import {
   MatExpansionModule,
   MatIconModule,
   MatInputModule,
+  MatPaginatorIntl,
   MatPaginatorModule,
   MatProgressSpinnerModule,
   MatRadioModule,
@@ -24,13 +25,14 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { TransferState } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { DialogComponent } from './components/dialog/dialog.component';
 import { FormComponent } from './components/form/form.component';
 import { ListComponent } from './components/list/list.component';
 import { ViewComponent } from './components/view/view.component';
 import { FC_SERVICE_CONFIG, FC_SERVICE_GUID, FCServiceConfigInterface, FormConstructorService } from './services/form-constructor.service';
+import { PaginatorIntlService } from './services/paginator-intl.service';
 import { DATE_FORMATS } from './utils/date-formats';
 
 const FC_COMPONENTS = [
@@ -44,8 +46,16 @@ const FC_ENTRY_COMPONENTS = [
 ];
 
 const FC_SERVICES = [
-  FormConstructorService
+  FormConstructorService,
+  PaginatorIntlService
 ];
+
+export function getMatPaginatorIntlService(translateService: TranslateService) {
+  const service = new PaginatorIntlService();
+  service.injectTranslateService(translateService);
+
+  return service;
+}
 
 @NgModule({
   imports: [
@@ -98,6 +108,11 @@ export class FormConstructorModule {
               languages: ['en']
             }, config
           }
+        },
+        {
+          provide: MatPaginatorIntl,
+          useFactory: (getMatPaginatorIntlService),
+          deps: [TranslateService]
         },
         {provide: MAT_DATE_LOCALE, useValue: config.language ? config.language : 'en'},
         {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},

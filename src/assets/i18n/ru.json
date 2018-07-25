@@ -85,6 +85,12 @@
     "filter": "Фильтрация",
     "number": "№"
   },
+  "paginator": {
+    "itemsPerPage": "Количество",
+    "nextPage": "Следующая страница",
+    "previousPage": "Предыдущая страница",
+    "of": "из"
+  },
   "user": {
     "form": {
       "id": "ID",
