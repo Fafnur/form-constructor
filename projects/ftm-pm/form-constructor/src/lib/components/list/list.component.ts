@@ -14,6 +14,7 @@ export interface ListConfig {
   pageIndex?: number;
   translatePrefix?: string;
   columns?: string[];
+  excludedFields?: string[];
   filter?: boolean;
   sort ?: string;
   sorts ?: string[];
@@ -31,7 +32,7 @@ export interface NodeCell {
 }
 
 export function transformList(columns: any[], isNullValue: string = '-'): NodeCell[] {
-  return columns.map(item => {
+  const cells = columns.filter(item => typeof item === 'string' || item.type !== 'config').map(item => {
     let conf = item;
     if (typeof item === 'string') {
       conf = <ListConfig> {
@@ -99,6 +100,10 @@ export function transformList(columns: any[], isNullValue: string = '-'): NodeCe
 
     return conf;
   });
+  const confs =  columns.filter(item => typeof item === 'object' && item.type === 'config');
+  cells['_config'] = confs.length ? confs[0] : {};
+
+  return cells;
 }
 
 @Component({
@@ -118,24 +123,19 @@ export class ListComponent implements OnInit, OnChanges {
   @Output() private pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   public ngOnInit() {
-    this.config = {
-      ... <ListConfig>{
-        count: 0,
-        responsive: true,
-        filter: true,
-        isSort: true,
-        fullSort: false,
-        pageSizeOptions: [5, 10, 15, 25],
-        pageSize: 10,
-        pageIndex: 0,
-      }, ...this.config
-    };
   }
 
   public ngOnChanges(): void {
-    if (this.nodeList != null && this.data != null) {
+    this.config = this.getConfig();
+    if (this.nodeList != null && this.data != null && this.config != null) {
       this.dataSource = new MatTableDataSource(this.data);
-      this.displayedColumns = this.config.columns && this.config.columns.length ? this.config.columns : this.nodeList.map(x => x.columnDef);
+      if (this.config.columns.length) {
+        this.displayedColumns = this.config.columns;
+      } else {
+        this.displayedColumns = this.nodeList
+          .filter(item => item.columnDef && this.config.excludedFields.indexOf(item.columnDef) < 0)
+          .map(x => x.columnDef);
+      }
       // this.dataSource.paginator = this.paginator;
       // this.dataSource.paginator.pageSize = this.config.pageSize;
       // this.dataSource.paginator.pageIndex = this.config.pageIndex;
@@ -176,8 +176,27 @@ export class ListComponent implements OnInit, OnChanges {
   }
 
   public sortData(sort: Sort): void {
-    this.paginator.firstPage();
+    if (!this.config.fullSort) {
+      this.dataSource.sort = this.sort;
+    }
     // this.dataSource.paginator.pageIndex = 0;
     this.sorted.emit(sort);
+  }
+
+  private getConfig(): ListConfig {
+    return <ListConfig> {
+      ...{
+        count: 0,
+        columns: [],
+        responsive: true,
+        filter: true,
+        isSort: true,
+        excludedFields: [],
+        fullSort: false,
+        pageSizeOptions: [5, 10, 15, 25],
+        pageSize: 10,
+        pageIndex: 0,
+      }, ...this.nodeList['_config'], ...this.config
+    };
   }
 }

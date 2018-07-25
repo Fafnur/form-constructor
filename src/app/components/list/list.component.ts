@@ -16,10 +16,7 @@ import { UserService } from '../../services/user.service';
 })
 export class ListComponent implements OnInit, OnDestroy {
   public users: User[];
-  public count: number = 0;
-  public page: number = 1;
-  public limit: number = 15;
-  public tableConfig: ListConfig;
+  public config: ListConfig;
   public nodeList: NodeCell[];
   private subscription: Subscription;
 
@@ -28,11 +25,11 @@ export class ListComponent implements OnInit, OnDestroy {
                      private userService: UserService) {
     this.subscription = new Subscription();
     this.nodeList = UserList;
-    this.tableConfig = <ListConfig> {
+    this.config = <ListConfig> {
       isSort: true,
       pageIndex: 0,
       pageSize: 10,
-      translatePrefix: 'user.form.',
+      count: 0,
       fullSort: true
     };
   }
@@ -43,7 +40,7 @@ export class ListComponent implements OnInit, OnDestroy {
         this.redirect(['/500']);
       }
       if (response) {
-        this.tableConfig.count = response.length;
+        this.config.count = response.length;
       }
     }));
     this.load();
@@ -58,24 +55,24 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   public onPaginate(event): void {
-    this.tableConfig.pageIndex = event.pageIndex + 1;
-    this.tableConfig.pageSize = event.pageSize;
+    this.config.pageIndex = event.pageIndex + 1;
+    this.config.pageSize = event.pageSize;
     this.load();
   }
 
   public onSorted(sort: Sort): void {
-    this.tableConfig.pageIndex = 0;
-    this.tableConfig.direction = sort.direction;
-    this.tableConfig.sort = sort.active;
+    this.config.pageIndex = 0;
+    this.config.direction = sort.direction;
+    this.config.sort = sort.active;
     this.load();
   }
 
   private load(): void {
     this.subscription.add(this.userService.get({
-      '_page': this.tableConfig.pageIndex,
-      '_limit': this.tableConfig.pageSize,
-      '_sort': this.tableConfig.sort,
-      '_order': this.tableConfig.direction
+      '_page': this.config.pageIndex,
+      '_limit': this.config.pageSize,
+      '_sort': this.config.sort,
+      '_order': this.config.direction
     }).subscribe(response => {
         if (response instanceof HttpErrorResponse) {
           this.redirect(['/500']);
