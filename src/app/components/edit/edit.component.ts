@@ -2,16 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormConstructorService, FormModel, FormNode, FormNodeConfig } from 'ftm-pm/form-constructor';
+import { FormModel, FormNode, FormNodeConfig } from 'ftm-pm/form-constructor';
 import { Subscription } from 'rxjs';
 
 import { User, UserModel } from '../../models/user';
 import { UserService } from '../../services/user.service';
 import { NotificationComponent } from '../notification/notification.component';
-import { FormGroup } from '@angular/forms';
-import { Client } from '../../models/client';
-import { ClientModel } from '../../models/client';
-import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-edit',

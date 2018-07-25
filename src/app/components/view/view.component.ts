@@ -25,6 +25,7 @@ export class ViewComponent implements OnInit, OnDestroy {
     this.nodeList = UserList;
     this.viewConfig = {
       translatePrefix: 'user.form.',
+      excludedFields: ['id', 'number', 'numberRequests', 'actions']
       // columns:  ['id', 'lastname', 'firstname']
     };
   }

@@ -5,6 +5,7 @@ import { NodeCell } from '../list/list.component';
 export interface ViewConfig {
   translatePrefix?: string;
   columns?: string[];
+  excludedFields?: string[];
 }
 
 @Component({
@@ -28,14 +29,26 @@ export class ViewComponent implements OnInit {
     this.nodeList.forEach(item => {
       this.node[item.columnDef] = item;
     });
-    if (this.config.columns && this.config.columns.length) {
+    this.config = this.getConfig();
+    if (this.config.columns.length) {
       this.displayedColumns = this.config.columns;
     } else {
-      this.displayedColumns = this.nodeList.map(x => x.columnDef);
+      this.displayedColumns = this.nodeList
+        .filter(item => item.columnDef && this.config.excludedFields.indexOf(item.columnDef) < 0)
+        .map(x => x.columnDef);
     }
   }
 
   public displayView(column: string): any {
     return this.node[column].dataName(this.data[column]);
+  }
+
+  private getConfig(): ViewConfig {
+    return <ViewConfig> {
+      ...{
+        columns: [],
+        excludedFields: []
+      }, ...this.nodeList['_config'], ...this.config
+    };
   }
 }
