@@ -16,7 +16,12 @@
       "minSum": 1200,
       "maxSum": 15000,
       "overdueTerm": 3,
-      "collectionPeriod": "30111"
+      "collectionPeriod": "30111",
+      "info": {
+        "parent": "Aleksandr",
+        "iso": "12321",
+        "link": "https://www.examle.com"
+      }
     },
     {
       "id": 2,

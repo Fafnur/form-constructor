@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { RestService } from './rest.service';
 
 import { environment } from '../../environments/environment';
-import { User } from '../models/user';
+import { User, UserInfo } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,12 @@ export class UserService extends RestService<User> {
   }
 
   public static transform(data: any): User {
-    return Object.assign(new User(), data);
+    const entity: User = Object.assign(new User(), data);
+    if (data.info) {
+      entity.info = Object.assign(new UserInfo(), data.info);
+    }
+
+    return entity;
   }
 
   public static reverseTransform(user: User): any {

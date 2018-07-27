@@ -19,6 +19,16 @@
   flex: 1 0;
   font-weight: 700;
   font-size: 1rem;
+
+  .fc-view-level-1 &__text {
+    padding-left: 1rem;
+  }
+  .fc-view-level-2 &__text {
+    padding-left: 2rem;
+  }
+  .fc-view-level-3 &__text {
+    padding-left: 3rem;
+  }
 }
 
 .fc-view-value {

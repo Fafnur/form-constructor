@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NodeCell, ViewConfig } from 'ftm-pm/form-constructor';
 import { Subscription } from 'rxjs';
 
-import { User, UserList } from '../../models/user';
+import { User, UserView } from '../../models/user';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -22,11 +22,8 @@ export class ViewComponent implements OnInit, OnDestroy {
                      private router: Router,
                      private userService: UserService) {
     this.subscription = new Subscription();
-    this.nodeList = UserList;
-    this.viewConfig = {
-      translatePrefix: 'user.form.',
-      // columns:  ['id', 'lastname', 'firstname']
-    };
+    this.nodeList = UserView;
+    console.log(UserView);
   }
 
   public ngOnInit(): void {
@@ -40,6 +37,7 @@ export class ViewComponent implements OnInit, OnDestroy {
       }
       if (response ) {
         this.user = response;
+        console.log(this.user);
       }
     }));
   }
