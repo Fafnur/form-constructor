@@ -147,22 +147,60 @@ export class FormNode implements FormNodeInterface {
       const fields: string[] = this.config.fields ? this.config.fields :
         Object.keys(this.controls).filter(item => this.config.excludedFields.indexOf(item) < 0);
 
+      const subProperties: string[] = [];
+      for (const key of Object.keys(this.controls)) {
+        const modelField = this.controls[key];
+        if (modelField.options['subProperty']) {
+          subProperties.push(key);
+        }
+      }
+
       for (const fieldName of fields) {
-        if (fieldName !== this.translationsField && this.model.hasOwnProperty(fieldName)) {
-          const value = entity[fieldName] || (<FormField>this.model[fieldName]).options['defaultValue'] || null;
+        if (fieldName !== this.translationsField) {
           const fieldOptions: FormTypeOptions = this.controls[fieldName].options;
           const formType: FormTypeInterface = this.controls[fieldName];
-          if (fieldOptions.multiLanguage) {
-            this.languages.forEach(language => {
-              const fieldLangName = `${fieldName}_${language}`;
-              let translationValue = value;
-              if (translations && translations[language] && translations[language][fieldName]) {
-                translationValue = translations[language][fieldName];
-              }
-              this.setField(formType, fieldLangName, translationValue);
-            });
-          } else {
-            this.setField(formType, fieldName, value);
+
+          if (this.model.hasOwnProperty(fieldName) && subProperties.indexOf(fieldName) < 0) {
+            const value = entity[fieldName] || (<FormField>this.model[fieldName]).options['defaultValue'] || null;
+            if (fieldOptions.multiLanguage) {
+              this.languages.forEach(language => {
+                const fieldLangName = `${fieldName}_${language}`;
+                let translationValue = value;
+                if (translations && translations[language] && translations[language][fieldName]) {
+                  translationValue = translations[language][fieldName];
+                }
+                this.setField(formType, fieldLangName, translationValue);
+              });
+            } else {
+              this.setField(formType, fieldName, value);
+            }
+          } else if (subProperties.indexOf(fieldName) >= 0) {
+            const value = this.getSubPropertyValue(fieldOptions.property, entity) || (<FormField>this.model[fieldName]).options['defaultValue'] || null;
+
+            if (fieldOptions.multiLanguage) {
+              this.languages.forEach(language => {
+                const fieldLangName = `${fieldName}_${language}`;
+                let translationValue = value;
+                if (translations && translations[language] && translations[language][fieldName]) {
+                  let val = translations[language];
+                  const paths = fieldOptions.property.split('.');
+                  for (const path of paths) {
+                    if (val.hasOwnProperty(path)) {
+                      val = val[path];
+                    } else {
+                      val = undefined;
+                      break;
+                    }
+                  }
+                  if (val != null) {
+                    translationValue = val;
+                  }
+                }
+                this.setField(formType, fieldLangName, translationValue);
+              });
+            } else {
+              this.setField(formType, fieldName, value);
+            }
           }
         }
       }
@@ -265,5 +303,23 @@ export class FormNode implements FormNodeInterface {
 
   private getField(formType: FormTypeInterface, fieldName: string): any {
     return formType.reverseTransform(this.form.get(fieldName).value);
+  }
+
+  private getSubPropertyValue(property: string, data: Object): any {
+    let val = data;
+
+    if (property && val != null) {
+      const paths =  property.split('.');
+      for (const path of paths) {
+        if (val.hasOwnProperty(path)) {
+          val = val[path];
+        } else {
+          val = undefined;
+          break;
+        }
+      }
+    }
+
+    return val;
   }
 }

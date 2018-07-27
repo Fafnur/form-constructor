@@ -50,7 +50,8 @@ export class FormConstructorService implements FormConstructorInterface {
 
     for (const fieldName of fields) {
       const field: FormField = <FormField>formModel[fieldName];
-      types[fieldName] = FormTypeFactory.create(field.type, fieldName, field.options);
+      const options = {...{subProperty: false}, ...field.options};
+      types[fieldName] = FormTypeFactory.create(field.type, fieldName, options);
       const type = types[fieldName];
       const fieldOptions = (<FormTypeOptions>type.options);
       if (fieldOptions.multiLanguage) {
