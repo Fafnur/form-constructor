@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import * as moment_ from 'moment/moment';
-
 const moment = moment_;
 
 export interface ListConfig {

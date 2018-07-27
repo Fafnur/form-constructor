@@ -1,9 +1,14 @@
-<div class="fc-view-group" *ngFor="let column of displayedColumns; let i=index">
-  <div class="fc-view-label">
-    <strong>{{ column }}</strong>
+<ng-container *ngFor="let column of displayedColumns; let i=index">
+  <div class="fc-view-group fc-view-level-{{config.level}} {{config.classes}}">
+    <div class="fc-view-label">
+      <span class="fc-view-label__text">{{ column }}</span>
+    </div>
+    <div class="fc-view-value">
+      {{ displayView(column) }}
+    </div>
   </div>
-  <div class="fc-view-value">
-    {{ displayView(column) }}
-  </div>
-</div>
+  <ng-container *ngIf="node[column].type === 'child'">
+    <fc-view [config]="getChildConfig(column)" [nodeList]="node[column].child" [data]="data[column]"></fc-view>
+  </ng-container>
+</ng-container>
 <ng-content></ng-content>

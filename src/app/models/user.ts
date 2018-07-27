@@ -7,14 +7,14 @@ import {
   RadioType,
   SelectType,
   TextType,
-  transformList
+  transformList,
+  transformView
 } from 'ftm-pm/form-constructor';
 
 import { TimestampableRestEntity } from './rest-entity';
 import { CurrencyChoices } from './currency';
 import { CountryChoices } from './country';
 import { Client, ClientModel } from './client';
-import { Component } from '@angular/core';
 
 /**
  * User
@@ -38,6 +38,7 @@ export class User extends TimestampableRestEntity {
   public email: string;
   public image: string;
   public client: Client;
+  public info: UserInfo;
 
   get avatar(): string {
     return this.image ? this.image : '/assets/images/theme/default-avatar.png';
@@ -47,6 +48,22 @@ export class User extends TimestampableRestEntity {
     return `${this.lastname} ${this.firstname} ${this.middlename}`;
   }
 }
+
+export class UserInfo {
+  public parent: string;
+  public iso: string;
+  public link: string;
+}
+
+export const UserViewCells: NodeCell[] = transformView([
+  {
+    type: 'config',
+    translatePrefix: 'user.form.'
+  },
+  'parent',
+  'iso',
+  'link'
+]);
 
 /**
  * UserModel
@@ -229,35 +246,31 @@ export const UserList: NodeCell[] = transformList([
     getAction: (action, item): string[] => ['/users', item.id, ...action['routes']]
   }
 ]);
-//
-// @FcEntity({
-//   config: {
-//     formName: 'user',
-//     localePrefix: 'user.',
-//   },
-//   types: {
-//     form: {
-//       submit: () => {},
-//     },
-//     list: {
-//       actions: []
-//     }
-//   }
-// })
-// export class Suser {
-//   @FcField({
-//     form: {
-//       type: TextType,
-//       options: {
-//         validators: [Validators.required]
-//       }
-//     },
-//     view: {
-//       type: 'text',
-//       options: {
-//         validators: [Validators.required]
-//       }
-//     },
-//   })
-//   public firstname: string;
-// }
+
+
+/**
+ * UserView
+ */
+export const UserView: NodeCell[] = transformView([
+  {
+    type: 'config',
+    translatePrefix: 'user.form.'
+  },
+  'id',
+  'lastname',
+  'firstname',
+  'middlename',
+  'countryCode',
+  'currencyCode',
+  'numberRequests',
+  {
+    columnDef: 'info',
+    type: 'child',
+    child: UserViewCells,
+    config: {
+      type: 'config',
+      translatePrefix: 'user.form.'
+    }
+  }
+]);
+
