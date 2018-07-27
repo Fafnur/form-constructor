@@ -174,6 +174,16 @@ export class ViewComponent implements OnInit {
     return this.node[column].dataName(val, column, this.data);
   }
 
+  public getLabel(column: string, header: string = null, action: boolean = null): string {
+    if (header === null) {
+      header = this.node[column].header;
+    }
+    if (action === null) {
+      action = this.node[column].usePrefix;
+    }
+    return action ? `${this.config.translatePrefix}${header}` : header;
+  }
+
   private getConfig(): ViewConfig {
     if (!this.nodeList.hasOwnProperty('_config')) {
       this.nodeList['_config'] = {};

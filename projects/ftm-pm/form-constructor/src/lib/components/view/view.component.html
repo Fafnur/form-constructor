@@ -2,7 +2,7 @@
   <ng-container *ngIf="node[column].subProperty">
     <div class="fc-view-group fc-view-level-{{ getPropertyLevel(column)}} {{config.classes}}">
       <div class="fc-view-label">
-        <span class="fc-view-label__text">{{ column }}</span>
+        <span class="fc-view-label__text">{{ getLabel(column) | translate }}</span>
       </div>
       <div class="fc-view-value">
         {{ displayPropertyView(column) }}
@@ -12,7 +12,7 @@
   <ng-container *ngIf="!node[column].subProperty">
     <div class="fc-view-group fc-view-level-{{config.level}} {{config.classes}}">
       <div class="fc-view-label">
-        <span class="fc-view-label__text">{{ column }}</span>
+        <span class="fc-view-label__text">{{ getLabel(column) | translate }}</span>
       </div>
       <div class="fc-view-value">
         {{ displayView(column) }}

@@ -111,7 +111,11 @@
       "email": "Email",
       "createdAt": "Created at",
       "numberRequests": "Number of requests",
-      "number": "№"
+      "number": "№",
+      "link": "Link",
+      "info": "Info",
+      "iso": "ISO",
+      "parent": "Parent"
     },
     "menu": {
       "borrowers": "Users",
