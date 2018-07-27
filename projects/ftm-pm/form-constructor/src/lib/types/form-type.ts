@@ -34,6 +34,8 @@ export interface FormTypeOptions {
   defaultValue ?: any;
   readOnly ?: boolean;
   disabled ?: boolean;
+  subProperty ?: boolean;
+  property ?: string;
   choices ?: any[];
   title ?: any;
   templateRef ?: TemplateRef<any>;

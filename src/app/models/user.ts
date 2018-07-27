@@ -264,12 +264,19 @@ export const UserView: NodeCell[] = transformView([
   'currencyCode',
   'numberRequests',
   {
+    columnDef: 'link',
+    type: 'text',
+    subProperty: true,
+    property: 'info.link'
+  },
+  {
     columnDef: 'info',
     type: 'child',
     child: UserViewCells,
     config: {
       type: 'config',
-      translatePrefix: 'user.form.'
+      translatePrefix: 'user.form.',
+      excludedFields: ['link']
     }
   }
 ]);

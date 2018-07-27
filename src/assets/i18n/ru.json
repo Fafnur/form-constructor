@@ -111,7 +111,11 @@
       "email": "Электронная почта",
       "createdAt": "Дата создания",
       "numberRequests": "Число заявок",
-      "number": "№"
+      "number": "№",
+      "link": "Ссылка",
+      "info": "Инфо",
+      "iso": "ISO",
+      "parent": "Родитель"
     },
     "menu": {
       "borrowers": "Пользователи",
