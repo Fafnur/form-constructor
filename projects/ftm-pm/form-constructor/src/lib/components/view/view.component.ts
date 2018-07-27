@@ -3,7 +3,6 @@ import * as moment_ from 'moment/moment';
 const moment = moment_;
 
 import { NodeCell } from '../list/list.component';
-import { ListConfig } from '../list/list.component';
 
 export interface ViewConfig {
   translatePrefix?: string;
@@ -13,20 +12,31 @@ export interface ViewConfig {
   excludedFields?: string[];
 }
 
+export interface ViewCell {
+  columnDef: string;
+  type: string;
+  header?: string;
+  usePrefix?: boolean;
+  isNullValue?: string;
+  subProperty?: boolean;
+  levelType?: number;
+
+  dataName?(value: any, column ?: string, entity ?: any): string;
+}
+
 export function transformView(columns: any[], isNullValue: string = '-'): NodeCell[] {
   const cells = columns.filter(item => typeof item === 'string' || item.type !== 'config').map(item => {
     let conf = item;
     if (typeof item === 'string') {
-      conf = <ListConfig> {
+      conf = <ViewCell> {
         columnDef: item,
         type: 'text',
         header: item,
         usePrefix: true,
-        dataName: (row) => {
-          if (typeof row === 'object') {
-            return row[item];
-          } else if (row) {
-            return row;
+        subProperty: false,
+        dataName: (value) => {
+          if (value != null) {
+            return value;
           } else {
             return isNullValue;
           }
@@ -36,47 +46,44 @@ export function transformView(columns: any[], isNullValue: string = '-'): NodeCe
       if (!item.header) {
         item.header = item.columnDef;
       }
+      if (item.subProperty == null) {
+        item.subProperty = false;
+      } else {
+        if (item.levelType == null) {
+          item.levelType = 0;
+        }
+      }
       if (item.usePrefix == null) {
         item.usePrefix = true;
       }
       switch (item.type) {
         case 'bool':
-          item.dataName = (row) => {
-            if (typeof row === 'object') {
-              return !!row[item];
-            } else if (row != null) {
-              return row;
+          item.dataName = (value, column, entity) => {
+           if (value != null) {
+              return !!value;
             } else {
-              return false;
+              return item.isNullValue ? item.isNullValue : isNullValue;
             }
           };
           break;
         case 'date':
-          item.dataName = (row) => {
-            if (typeof row === 'object') {
-              if (row[item]) {
-                return moment(new Date(row[item]));
-              } else {
-                return moment(new Date());
-              }
-            } else if (row) {
-              return moment(new Date(row));
+          item.dataName = (value, column, entity) => {
+            if (value != null) {
+              return moment(new Date(value));
             } else {
-              return moment(new Date());
+              return item.isNullValue ? item.isNullValue : isNullValue;
             }
           };
           break;
         case 'child':
-          item.dataName = (row) => {
+          item.dataName = (value, column, entity) => {
             return item.isNullValue ? item.isNullValue : isNullValue;
           };
           break;
         default: {
-          item.dataName = (row) => {
-            if (typeof row === 'object') {
-              return row[item];
-            } else if (row) {
-              return row;
+          item.dataName = (value, column, entity) => {
+            if (value != null) {
+              return value;
             } else {
               return item.isNullValue ? item.isNullValue : isNullValue;
             }
@@ -124,11 +131,47 @@ export class ViewComponent implements OnInit {
   }
 
   public displayView(column: string): any {
-    return this.node[column].dataName(this.data[column]);
+    return this.node[column].dataName(this.data[column], column, this.data);
   }
 
   public getChildConfig(column: string): Object {
     return {...this.node[column].config, ...{level: this.config.level + 1, classes: this.config.classes + ' fc-view-group_child' }};
+  }
+
+  public getPropertyLevel(column: string): number {
+    let level = this.config.level;
+    switch (this.node[column]['levelType']) {
+      case 1:
+        if (this.node[column]['property']) {
+          level += this.node[column]['property'].split('.').length;
+        }
+        break;
+      case 2:
+        level = this.node[column]['level'];
+        break;
+      case 3:
+        level += this.node[column]['level'];
+        break;
+    }
+
+    return level;
+  }
+
+  public displayPropertyView(column: string): any {
+    let val = this.data;
+
+    if (this.node[column]['property'] && val != null) {
+      const paths =  this.node[column]['property'].split('.');
+      for (const path of paths) {
+        if (val.hasOwnProperty(path)) {
+          val = val[path];
+        } else {
+          break;
+        }
+      }
+    }
+
+    return this.node[column].dataName(val, column, this.data);
   }
 
   private getConfig(): ViewConfig {
