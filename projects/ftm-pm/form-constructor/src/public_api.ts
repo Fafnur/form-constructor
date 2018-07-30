@@ -13,8 +13,8 @@ export { FormField, FormModel } from './lib/models/form-model';
 export { FormConstructorService } from './lib/services/form-constructor.service';
 
 // Components
-export { ListComponent, NodeCell, ListConfig, transformList } from './lib/components/list/list.component';
-export { ViewComponent, ViewConfig, transformView } from './lib/components/view/view.component';
+export { ListComponent, ListCell, ListConfig, transformList } from './lib/components/list/list.component';
+export { ViewComponent, ViewConfig, ViewCell, transformView } from './lib/components/view/view.component';
 export { FormComponent } from './lib/components/form/form.component';
 
 // Types

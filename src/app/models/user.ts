@@ -3,12 +3,13 @@ import {
   DialogType,
   ExpansionPanelType,
   FormModel,
-  NodeCell,
+  ListCell,
   RadioType,
   SelectType,
   TextType,
   transformList,
-  transformView
+  transformView,
+  ViewCell
 } from 'ftm-pm/form-constructor';
 
 import { TimestampableRestEntity } from './rest-entity';
@@ -55,7 +56,7 @@ export class UserInfo {
   public link: string;
 }
 
-export const UserViewCells: NodeCell[] = transformView([
+export const UserViewCells: ViewCell[] = transformView([
   {
     type: 'config',
     translatePrefix: 'user.form.'
@@ -209,7 +210,7 @@ export const UserModel: FormModel = {
 /**
  * UserList
  */
-export const UserList: NodeCell[] = transformList([
+export const UserListCells: ListCell[] = transformList([
   {
     type: 'config',
     translatePrefix: 'user.form.'
@@ -251,7 +252,7 @@ export const UserList: NodeCell[] = transformList([
 /**
  * UserView
  */
-export const UserView: NodeCell[] = transformView([
+export const UserView: ViewCell[] = transformView([
   {
     type: 'config',
     translatePrefix: 'user.form.'

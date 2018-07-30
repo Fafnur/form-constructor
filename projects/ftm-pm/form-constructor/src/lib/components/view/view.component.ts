@@ -2,8 +2,6 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import * as moment_ from 'moment/moment';
 const moment = moment_;
 
-import { NodeCell } from '../list/list.component';
-
 export interface ViewConfig {
   translatePrefix?: string;
   classes?: string;
@@ -13,7 +11,7 @@ export interface ViewConfig {
 }
 
 export interface ViewCell {
-  columnDef: string;
+  columnDef?: string;
   type: string;
   header?: string;
   usePrefix?: boolean;
@@ -24,8 +22,8 @@ export interface ViewCell {
   dataName?(value: any, column ?: string, entity ?: any): string;
 }
 
-export function transformView(columns: any[], isNullValue: string = '-'): NodeCell[] {
-  const cells = columns.filter(item => typeof item === 'string' || item.type !== 'config').map(item => {
+export function transformView(columns: any[], isNullValue: string = '-'): ViewCell[] {
+  const cells = columns.map(item => {
     let conf = item;
     if (typeof item === 'string') {
       conf = <ViewCell> {
@@ -42,6 +40,8 @@ export function transformView(columns: any[], isNullValue: string = '-'): NodeCe
           }
         }
       };
+    } else if (typeof item === 'object' && item.type === 'config') {
+      return conf;
     } else {
       if (!item.header) {
         item.header = item.columnDef;
@@ -95,7 +95,9 @@ export function transformView(columns: any[], isNullValue: string = '-'): NodeCe
     return conf;
   });
   const confs =  columns.filter(item => typeof item === 'object' && item.type === 'config');
-  cells['_config'] = confs.length ? confs[0] : {};
+  if (!confs.length) {
+    cells.push({type: 'config'});
+  }
 
   return cells;
 }
@@ -107,8 +109,8 @@ export function transformView(columns: any[], isNullValue: string = '-'): NodeCe
 })
 export class ViewComponent implements OnInit {
   @Input() public data: any;
-  @Input() public config: ViewConfig = {};
-  @Input() public nodeList: NodeCell[];
+  @Input() public config: ViewConfig;
+  @Input() public viewCells: ViewCell[];
   public displayedColumns: string[];
   @HostBinding('attr.class') public class = 'fc-view';
   public node: Object;
@@ -118,13 +120,13 @@ export class ViewComponent implements OnInit {
   public ngOnInit(): void {
     this.config = this.getConfig();
     this.node = {};
-    this.nodeList.forEach(item => {
+    this.viewCells.forEach(item => {
       this.node[item.columnDef] = item;
     });
     if (this.config.columns.length) {
       this.displayedColumns = this.config.columns;
     } else {
-      this.displayedColumns = this.nodeList
+      this.displayedColumns = this.viewCells
         .filter(item => item.columnDef && this.config.excludedFields.indexOf(item.columnDef) < 0)
         .map(x => x.columnDef);
     }
@@ -185,8 +187,8 @@ export class ViewComponent implements OnInit {
   }
 
   private getConfig(): ViewConfig {
-    if (!this.nodeList.hasOwnProperty('_config')) {
-      this.nodeList['_config'] = {};
+    if (!this.config) {
+      this.config = {};
     }
     return <ViewConfig> {
       ...{
@@ -194,7 +196,13 @@ export class ViewComponent implements OnInit {
         level: 0,
         columns: [],
         excludedFields: []
-      }, ...this.nodeList['_config'], ...this.config
+      }, ...this.findConfig(), ...this.config
     };
+  }
+
+  private findConfig(): ViewConfig {
+    const confs = this.viewCells ? this.viewCells.filter(item => item.type === 'config') : [];
+
+    return confs.length ? <ViewConfig>confs[0] : <ViewConfig> {type: 'config'};
   }
 }

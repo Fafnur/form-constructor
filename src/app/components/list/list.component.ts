@@ -2,12 +2,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Sort } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ListConfig, NodeCell } from 'ftm-pm/form-constructor';
+import { ListConfig, ListCell } from 'ftm-pm/form-constructor';
 import { Subscription } from 'rxjs';
 
-import { User, UserList } from '../../models/user';
+import { User, UserListCells } from '../../models/user';
 import { UserService } from '../../services/user.service';
-
 
 @Component({
   selector: 'app-list',
@@ -17,14 +16,14 @@ import { UserService } from '../../services/user.service';
 export class ListComponent implements OnInit, OnDestroy {
   public users: User[];
   public config: ListConfig;
-  public nodeList: NodeCell[];
+  public listCells: ListCell[];
   private subscription: Subscription;
 
   public constructor(private router: Router,
                      private route: ActivatedRoute,
                      private userService: UserService) {
     this.subscription = new Subscription();
-    this.nodeList = UserList;
+    this.listCells = UserListCells;
     this.config = <ListConfig> {
       isSort: true,
       pageIndex: 0,
