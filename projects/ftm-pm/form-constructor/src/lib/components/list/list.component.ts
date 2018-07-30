@@ -20,18 +20,20 @@ export interface ListConfig {
   direction ?: string;
 }
 
-export interface NodeCell {
+export interface ListCell {
   columnDef: string;
   type: string;
   header?: string;
   usePrefix?: boolean;
   isNullValue?: string;
+  actions?: any[];
+  getAction?(): any;
 
   dataName?(row): string;
 }
 
-export function transformList(columns: any[], isNullValue: string = '-'): NodeCell[] {
-  const cells = columns.filter(item => typeof item === 'string' || item.type !== 'config').map(item => {
+export function transformList(columns: any[], isNullValue: string = '-'): ListCell[] {
+  const cells = columns.map(item => {
     let conf = item;
     if (typeof item === 'string') {
       conf = <ListConfig> {
@@ -49,6 +51,8 @@ export function transformList(columns: any[], isNullValue: string = '-'): NodeCe
           }
         }
       };
+    } else if (typeof item === 'object' && item.type === 'config') {
+      return conf;
     } else {
       if (!item.header) {
         item.header = item.columnDef;
@@ -100,7 +104,9 @@ export function transformList(columns: any[], isNullValue: string = '-'): NodeCe
     return conf;
   });
   const confs =  columns.filter(item => typeof item === 'object' && item.type === 'config');
-  cells['_config'] = confs.length ? confs[0] : {};
+  if (!confs.length) {
+    cells.push({type: 'config'});
+  }
 
   return cells;
 }
@@ -113,25 +119,26 @@ export function transformList(columns: any[], isNullValue: string = '-'): NodeCe
 export class ListComponent implements OnInit, OnChanges {
   @Input() public data: any;
   @Input() public config: ListConfig;
-  @Input() public nodeList: NodeCell[];
+  @Input() public listCells: ListCell[];
   public displayedColumns: string[];
   public dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
   @ViewChild(MatSort) private sort: MatSort;
-  @Output() private sorted: EventEmitter<Sort> = new EventEmitter<Sort>();
-  @Output() private pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
+  @Output() public sorted: EventEmitter<Sort> = new EventEmitter<Sort>();
+  @Output() public pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   public ngOnInit() {
   }
 
   public ngOnChanges(): void {
     this.config = this.getConfig();
-    if (this.nodeList != null && this.data != null && this.config != null) {
+    console.log(this.config);
+    if (this.listCells != null && this.data != null && this.config != null) {
       this.dataSource = new MatTableDataSource(this.data);
       if (this.config.columns.length) {
         this.displayedColumns = this.config.columns;
       } else {
-        this.displayedColumns = this.nodeList
+        this.displayedColumns = this.listCells
           .filter(item => item.columnDef && this.config.excludedFields.indexOf(item.columnDef) < 0)
           .map(x => x.columnDef);
       }
@@ -156,7 +163,7 @@ export class ListComponent implements OnInit, OnChanges {
 
   public onPaginate(event: PageEvent): void {
     this.config.pageSize = event.pageSize;
-    this.config.pageIndex = event.pageIndex + 1;
+    this.config.pageIndex = event.pageIndex;
     this.pageEvent.emit(event);
   }
 
@@ -164,7 +171,7 @@ export class ListComponent implements OnInit, OnChanges {
     return i + 1 + (this.config.pageIndex > 0 ? this.config.pageIndex - 1 : 0) * this.config.pageSize;
   }
 
-  public getHeader(column: NodeCell, header: string = null, action: boolean = null): string {
+  public getHeader(column: ListCell, header: string = null, action: boolean = null): string {
     if (header === null) {
       header = column.header;
     }
@@ -183,6 +190,9 @@ export class ListComponent implements OnInit, OnChanges {
   }
 
   private getConfig(): ListConfig {
+    if (!this.config) {
+      this.config = {};
+    }
     return <ListConfig> {
       ...{
         count: 0,
@@ -195,7 +205,13 @@ export class ListComponent implements OnInit, OnChanges {
         pageSizeOptions: [5, 10, 15, 25],
         pageSize: 10,
         pageIndex: 0,
-      }, ...this.nodeList['_config'], ...this.config
+      }, ...this.findConfig(), ...this.config
     };
+  }
+
+  private findConfig(): ListConfig {
+    const confs = this.listCells ? this.listCells.filter(item => item.type === 'config') : [];
+
+    return confs.length ? <ListConfig>confs[0] : <ListConfig> {type: 'config'};
   }
 }

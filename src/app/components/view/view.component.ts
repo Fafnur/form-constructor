@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NodeCell, ViewConfig } from 'ftm-pm/form-constructor';
+import { ViewCell, ViewConfig } from 'ftm-pm/form-constructor';
 import { Subscription } from 'rxjs';
 
 import { User, UserView } from '../../models/user';
@@ -14,8 +14,10 @@ import { UserService } from '../../services/user.service';
 })
 export class ViewComponent implements OnInit, OnDestroy {
   public user: User;
-  public nodeList: NodeCell[];
-  public viewConfig: ViewConfig;
+  public nodeList: ViewCell[];
+  public viewConfig: ViewConfig = {
+    excludedFields: ['id']
+  };
   private subscription: Subscription;
 
   public constructor(private route: ActivatedRoute,
@@ -23,7 +25,6 @@ export class ViewComponent implements OnInit, OnDestroy {
                      private userService: UserService) {
     this.subscription = new Subscription();
     this.nodeList = UserView;
-    console.log(UserView);
   }
 
   public ngOnInit(): void {
@@ -37,7 +38,6 @@ export class ViewComponent implements OnInit, OnDestroy {
       }
       if (response ) {
         this.user = response;
-        console.log(this.user);
       }
     }));
   }

@@ -20,7 +20,7 @@
     </div>
   </ng-container>
   <ng-container *ngIf="node[column].type === 'child'">
-    <fc-view [config]="getChildConfig(column)" [nodeList]="node[column].child" [data]="data[column]"></fc-view>
+    <fc-view [config]="getChildConfig(column)" [viewCells]="node[column].child" [data]="data[column]"></fc-view>
   </ng-container>
 </ng-container>
 <ng-content></ng-content>

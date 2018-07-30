@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { FormModel, NodeCell, RadioType, TextType, transformList } from 'ftm-pm/form-constructor';
+import { FormModel, ListCell, RadioType, TextType, transformList } from 'ftm-pm/form-constructor';
 
 import { TimestampableRestEntity } from './rest-entity';
 
@@ -59,7 +59,7 @@ export const ClientModel: FormModel = {
 /**
  * ClientList
  */
-export const ClientList: NodeCell[] = transformList([
+export const ClientListCells: ListCell[] = transformList([
   { columnDef: 'number', type: 'index', header: 'number', usePrefix: true },
   'lastname',
   'firstname',
