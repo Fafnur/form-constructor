@@ -8,6 +8,7 @@ export interface ViewConfig {
   level?: number;
   columns?: string[];
   excludedFields?: string[];
+  search ?: Object;
 }
 
 export interface ViewCell {
@@ -18,6 +19,7 @@ export interface ViewCell {
   isNullValue?: string;
   subProperty?: boolean;
   levelType?: number;
+  translate?: boolean;
 
   dataName?(value: any, column ?: string, entity ?: any): string;
 }
@@ -31,6 +33,7 @@ export function transformView(columns: any[], isNullValue: string = '-'): ViewCe
         type: 'text',
         header: item,
         usePrefix: true,
+        translate: false,
         subProperty: false,
         dataName: (value) => {
           if (value != null) {
@@ -55,6 +58,9 @@ export function transformView(columns: any[], isNullValue: string = '-'): ViewCe
       }
       if (item.usePrefix == null) {
         item.usePrefix = true;
+      }
+      if (item.translate == null) {
+        item.translate = false;
       }
       switch (item.type) {
         case 'bool':
@@ -81,13 +87,15 @@ export function transformView(columns: any[], isNullValue: string = '-'): ViewCe
           };
           break;
         default: {
-          item.dataName = (value, column, entity) => {
-            if (value != null) {
-              return value;
-            } else {
-              return item.isNullValue ? item.isNullValue : isNullValue;
-            }
-          };
+          if (typeof item.dataName !== 'function') {
+            item.dataName = (value, column, entity) => {
+              if (value != null) {
+                return value;
+              } else {
+                return item.isNullValue ? item.isNullValue : isNullValue;
+              }
+            };
+          }
         }
       }
     }

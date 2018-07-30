@@ -226,7 +226,7 @@ export const UserListCells: ListCell[] = transformList([
   {
     columnDef: 'actions',
     type: 'actions',
-    header: 'actions',
+    header: 'list.actions',
     usePrefix: false,
     actions: [
       {
@@ -248,6 +248,46 @@ export const UserListCells: ListCell[] = transformList([
   }
 ]);
 
+export const UserModifiedListCells: ListCell[] = transformList([
+  {
+    type: 'config',
+    translatePrefix: 'user.form.'
+  },
+  {columnDef: 'number', type: 'index', header: 'number', usePrefix: true},
+  'id',
+  'lastname',
+  'firstname',
+  'middlename',
+  'countryCode',
+  'currencyCode',
+  'numberRequests',
+  {
+    columnDef: 'actions',
+    type: 'actions',
+    header: 'list.actions',
+    usePrefix: false,
+    actions: [
+      {
+        label: 'user.actions.approve',
+        color: 'primary',
+        type: 'button',
+        usePrefix: false
+      },
+      {
+        label: 'user.actions.decline',
+        color: 'accent',
+        type: 'button',
+        usePrefix: false
+      },
+      {
+        label: 'user.actions.disable',
+        color: '',
+        type: 'button',
+        usePrefix: false
+      }
+    ],
+  }
+]);
 
 /**
  * UserView

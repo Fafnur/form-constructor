@@ -5,15 +5,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ListConfig, ListCell } from 'ftm-pm/form-constructor';
 import { Subscription } from 'rxjs';
 
-import { User, UserListCells } from '../../models/user';
+import { User, UserModifiedListCells } from '../../models/user';
 import { UserService } from '../../services/user.service';
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  selector: 'app-modified-list',
+  templateUrl: './modified-list.component.html',
+  styleUrls: ['./modified-list.component.scss']
 })
-export class ListComponent implements OnInit, OnDestroy {
+export class ModifiedListComponent implements OnInit, OnDestroy {
   public users: User[];
   public config: ListConfig;
   public listCells: ListCell[];
@@ -23,7 +23,7 @@ export class ListComponent implements OnInit, OnDestroy {
                      private route: ActivatedRoute,
                      private userService: UserService) {
     this.subscription = new Subscription();
-    this.listCells = UserListCells;
+    this.listCells = UserModifiedListCells;
     this.config = <ListConfig> {
       isSort: true,
       pageIndex: 0,
@@ -67,13 +67,17 @@ export class ListComponent implements OnInit, OnDestroy {
     this.load();
   }
 
+  public onAction(event: Object): void {
+    console.log(event);
+  }
+
   private load(): void {
     this.subscription.add(this.userService.get({
-      '_page': this.config.pageIndex,
-      '_limit': this.config.pageSize,
-      '_sort': this.config.sort,
-      '_order': this.config.direction
-    }).subscribe(response => {
+        '_page': this.config.pageIndex,
+        '_limit': this.config.pageSize,
+        '_sort': this.config.sort,
+        '_order': this.config.direction
+      }).subscribe(response => {
         if (response instanceof HttpErrorResponse) {
           this.redirect(['/500']);
         }

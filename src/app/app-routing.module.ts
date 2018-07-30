@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ListComponent } from './components/list/list.component';
 import { EditComponent } from './components/edit/edit.component';
+import { LayoutComponent } from './components/layout/layout.component';
+import { ListComponent } from './components/list/list.component';
+import { ModifiedListComponent } from './components/modified-list/modified-list.component';
 import { ViewComponent } from './components/view/view.component';
 import { ServerErrorComponent } from './components/server-error/server-error.component';
 
@@ -25,6 +26,10 @@ export const routes: Routes = [
       {
         path: 'list',
         component: ListComponent
+      },
+      {
+        path: 'modified-list',
+        component: ModifiedListComponent
       },
       {
         path: 'users/:id/edit',
