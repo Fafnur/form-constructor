@@ -84,7 +84,8 @@
     "empty": "Коллекция пуста",
     "actions": "Действия",
     "filter": "Фильтрация",
-    "number": "№"
+    "number": "№",
+    "selectAll": ""
   },
   "paginator": {
     "itemsPerPage": "Количество",

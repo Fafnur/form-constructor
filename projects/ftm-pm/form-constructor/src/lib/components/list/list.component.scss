@@ -1,0 +1,35 @@
+td.mat-cell:first-child,
+td.mat-footer-cell:first-child,
+th.mat-header-cell:first-child {
+  padding-left: 24px;
+  padding-right: 12px;
+}
+
+td.mat-cell,
+td.mat-footer-cell,
+th.mat-header-cell {
+  padding: 0 0.15rem;
+}
+
+//th.mat-header-cell:first-child.mat-header-cell_chekbox,
+//td.mat-cell:first-child.mat-cell_chekbox {
+//  padding-left: 0;
+//}
+
+.paginator-actions {
+  margin-bottom: 1rem;
+
+  .mat-button,
+  .mat-raised-button {
+    width: 100%;
+  }
+  @media (min-width: 600px) {
+    .mat-button,
+    .mat-raised-button {
+      width: inherit;
+    }
+  }
+  @media (min-width: 800px) {
+    margin-top: -3rem;
+  }
+}
