@@ -8,18 +8,23 @@
   <div [ngClass]="{'table-responsive': config.responsive}">
     <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
       <ng-container *ngFor="let column of listCells; let i=index;" [matColumnDef]="column.columnDef">
+        <ng-container *ngIf="config.isSort && config.sortHeaders.indexOf(column.columnDef) >= 0">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ getHeader(column) | translate }}</th>
+        </ng-container>
+        <ng-container *ngIf="!config.isSort || config.sortHeaders.indexOf(column.columnDef) < 0">
+          <th mat-header-cell *matHeaderCellDef> {{ getHeader(column) | translate }}</th>
+        </ng-container>
         <ng-container [ngSwitch]="column.type">
           <ng-container *ngSwitchCase="'actions'">
-            <th mat-header-cell *matHeaderCellDef>{{ 'list.actions' | translate }}</th>
             <td mat-cell *matCellDef="let row">
               <ng-container *ngFor="let action of column.actions">
                 <ng-container *ngIf="action.type === 'link'">
-                  <a mat-raised-button color="{{ action.color }}" [routerLink]="column.getAction(action, row)">
+                  <a mat-raised-button color="{{ action.color }}" [routerLink]="getActionLink(column, action, row)">
                     {{ getHeader(column, action.label, action.usePrefix) | translate }}
                   </a>
                 </ng-container>
                 <ng-container *ngIf="action.type === 'button'">
-                  <button mat-raised-button type="button" color="{{ action.color }}">
+                  <button mat-raised-button type="button" color="{{ action.color }}" (click)="onAction(row, action, column, $event)">
                     {{ getHeader(column, action.label, action.usePrefix) | translate }}
                   </button>
                 </ng-container>
@@ -27,26 +32,22 @@
             </td>
           </ng-container>
           <ng-container *ngSwitchCase="'bool'">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ getHeader(column) | translate }}</th>
             <td mat-cell *matCellDef="let row; let i=index;">
               {{ (column.usePrefix ? config.translatePrefix + column.dataName(row) : column.dataName(row)) | translate
               }}
             </td>
           </ng-container>
           <ng-container *ngSwitchCase="'date'">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ getHeader(column) | translate }}</th>
             <td mat-cell *matCellDef="let row; let i=index;">
               {{ column.dataName(row) | date:'dd.m.y' }}
             </td>
           </ng-container>
           <ng-container *ngSwitchCase="'index'">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ getHeader(column) | translate }}</th>
             <td mat-cell *matCellDef="let row; let i=index;">
               {{ getIndex(i) }}
             </td>
           </ng-container>
           <ng-container *ngSwitchDefault>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ getHeader(column) | translate }}</th>
             <td mat-cell *matCellDef="let row">
               {{ column.dataName(row) }}
             </td>

@@ -18,6 +18,10 @@ export interface ListConfig {
   sort ?: string;
   sorts ?: string[];
   direction ?: string;
+  sortHeaders ?: string[];
+  excludedSortHeaders ?: string[];
+  search ?: Object;
+  groups ?: string[];
 }
 
 export interface ListCell {
@@ -123,16 +127,17 @@ export class ListComponent implements OnInit, OnChanges {
   public displayedColumns: string[];
   public dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
-  @ViewChild(MatSort) private sort: MatSort;
+  @ViewChild(MatSort) public sort: MatSort;
   @Output() public sorted: EventEmitter<Sort> = new EventEmitter<Sort>();
   @Output() public pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
+  @Output() public action: EventEmitter<any> = new EventEmitter<any>();
+  public node: Object;
 
   public ngOnInit() {
   }
 
   public ngOnChanges(): void {
     this.config = this.getConfig();
-    console.log(this.config);
     if (this.listCells != null && this.data != null && this.config != null) {
       this.dataSource = new MatTableDataSource(this.data);
       if (this.config.columns.length) {
@@ -172,10 +177,10 @@ export class ListComponent implements OnInit, OnChanges {
   }
 
   public getHeader(column: ListCell, header: string = null, action: boolean = null): string {
-    if (header === null) {
+    if (header == null) {
       header = column.header;
     }
-    if (action === null) {
+    if (action == null) {
       action = column.usePrefix;
     }
     return action ? `${this.config.translatePrefix}${header}` : header;
@@ -184,19 +189,50 @@ export class ListComponent implements OnInit, OnChanges {
   public sortData(sort: Sort): void {
     if (!this.config.fullSort) {
       this.dataSource.sort = this.sort;
+    } else if (sort.active) {
+      // this.data = [];
+      this.paginator.firstPage();
     }
-    // this.dataSource.paginator.pageIndex = 0;
     this.sorted.emit(sort);
+  }
+
+  public getActionLink(column: any, action: any, row: any): any {
+    if (typeof action.getAction === 'function') {
+      return action.getAction(action, row);
+    } else if (typeof column.getAction === 'function') {
+      return column.getAction(action, row);
+    } else {
+      return ['/'];
+    }
+  }
+
+  public onAction(data: Object, action: any, column: any, event): void {
+    this.action.emit({
+      data: data,
+      action: action,
+      column: column,
+      event: event
+    });
   }
 
   private getConfig(): ListConfig {
     if (!this.config) {
       this.config = {};
     }
-    return <ListConfig> {
+    this.node = {};
+    if (this.listCells) {
+      this.listCells.forEach(item => {
+        if (item.columnDef) {
+          this.node[item.columnDef] = item;
+        }
+      });
+    }
+    this.config =  <ListConfig> {
       ...{
         count: 0,
         columns: [],
+        sortHeaders: [],
+        excludedSortHeaders: [],
         responsive: true,
         filter: true,
         isSort: true,
@@ -207,6 +243,18 @@ export class ListComponent implements OnInit, OnChanges {
         pageIndex: 0,
       }, ...this.findConfig(), ...this.config
     };
+
+    if (this.listCells && this.listCells.length) {
+      if (!this.config.sortHeaders.length) {
+        this.config.sortHeaders = this.listCells
+          .filter(item => item.columnDef && this.config.excludedFields.indexOf(item.columnDef) < 0)
+          .map(item => item.columnDef);
+      } else {
+        this.config.sortHeaders = this.config.sortHeaders.filter(item => this.config.excludedFields.indexOf(item) < 0 && !!this.node[item]);
+      }
+    }
+
+    return this.config;
   }
 
   private findConfig(): ListConfig {

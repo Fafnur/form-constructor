@@ -38,6 +38,7 @@
   "menu": {
     "dashboard": "Dashboard",
     "list": "List component",
+    "modifiedList": "Modified list component",
     "edit": "Edit component",
     "view": "View component"
   },
@@ -127,8 +128,16 @@
     "list": {
       "title": "All users"
     },
+    "modifiedList": {
+      "title": "Edit groups"
+    },
     "view": {
       "title": "View user"
+    },
+    "actions": {
+      "approve": "Approve",
+      "decline": "Decline",
+      "disable": "Disable"
     }
   }
 }

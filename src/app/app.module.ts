@@ -25,6 +25,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { ServerErrorComponent } from './components/server-error/server-error.component';
 import { ViewComponent } from './components/view/view.component';
+import { ModifiedListComponent } from './components/modified-list/modified-list.component';
 
 export function exportTranslateStaticLoader(http: HttpClient, transferState: TransferState) {
   return new TranslateBrowserLoader('/assets/i18n/', '.json', transferState, http);
@@ -40,7 +41,8 @@ export function exportTranslateStaticLoader(http: HttpClient, transferState: Tra
     NotFoundComponent,
     NotificationComponent,
     DashboardComponent,
-    ServerErrorComponent
+    ServerErrorComponent,
+    ModifiedListComponent
   ],
   entryComponents: [
     NotificationComponent

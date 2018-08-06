@@ -1,0 +1,15 @@
+<ng-container *ngIf="users; else spinner">
+  <h3>{{ 'user.modifiedList.title' | translate }}</h3>
+  <mat-card>
+    <div class="table-responsive">
+      <fc-list [data]="users" [listCells]="listCells" [config]="config" (sorted)="onSorted($event)"
+               (pageEvent)="onPaginate($event)" (action)="onAction($event)">
+      </fc-list>
+    </div>
+  </mat-card>
+</ng-container>
+<ng-template #spinner>
+  <div class="mat-spinner-wrapper">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

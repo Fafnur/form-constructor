@@ -18,6 +18,11 @@ export const menu: MenuItem[] = [
     icon: 'home',
   },
   {
+    path: '/modified-list',
+    label: 'menu.modifiedList',
+    icon: 'home',
+  },
+  {
     path: '/view',
     label: 'menu.view',
     icon: 'home',

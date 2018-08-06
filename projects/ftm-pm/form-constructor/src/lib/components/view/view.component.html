@@ -14,7 +14,10 @@
       <div class="fc-view-label">
         <span class="fc-view-label__text">{{ getLabel(column) | translate }}</span>
       </div>
-      <div class="fc-view-value">
+      <div class="fc-view-value" *ngIf="node[column].translate">
+        {{ displayView(column) | translate }}
+      </div>
+      <div class="fc-view-value" *ngIf="!node[column].translate">
         {{ displayView(column) }}
       </div>
     </div>
