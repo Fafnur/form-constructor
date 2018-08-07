@@ -253,6 +253,31 @@ export const UserModifiedListCells: ListCell[] = transformList([
     type: 'config',
     translatePrefix: 'user.form.'
   },
+  {
+    columnDef: 'multiAction',
+    type: 'checkbox',
+    header: 'group',
+    actions: [
+      {
+        label: 'user.actions.approve',
+        color: 'primary',
+        type: 'button',
+        usePrefix: false
+      },
+      {
+        label: 'user.actions.decline',
+        color: 'accent',
+        type: 'button',
+        usePrefix: false
+      },
+      {
+        label: 'user.actions.disable',
+        color: '',
+        type: 'button',
+        usePrefix: false
+      }
+    ]
+  },
   {columnDef: 'number', type: 'index', header: 'number', usePrefix: true},
   'id',
   'lastname',

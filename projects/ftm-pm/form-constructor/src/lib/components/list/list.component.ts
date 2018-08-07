@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
+import { MatCheckboxChange, MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import * as moment_ from 'moment/moment';
+
 const moment = moment_;
 
 export interface ListConfig {
@@ -15,13 +16,14 @@ export interface ListConfig {
   columns?: string[];
   excludedFields?: string[];
   filter?: boolean;
-  sort ?: string;
-  sorts ?: string[];
-  direction ?: string;
-  sortHeaders ?: string[];
-  excludedSortHeaders ?: string[];
-  search ?: Object;
-  groups ?: string[];
+  sort?: string;
+  sorts?: string[];
+  direction?: string;
+  sortHeaders?: string[];
+  excludedSortHeaders?: string[];
+  search?: Object;
+  groups?: string[];
+  actions?: any[];
 }
 
 export interface ListCell {
@@ -31,6 +33,7 @@ export interface ListCell {
   usePrefix?: boolean;
   isNullValue?: string;
   actions?: any[];
+
   getAction?(): any;
 
   dataName?(row): string;
@@ -107,7 +110,7 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
 
     return conf;
   });
-  const confs =  columns.filter(item => typeof item === 'object' && item.type === 'config');
+  const confs = columns.filter(item => typeof item === 'object' && item.type === 'config');
   if (!confs.length) {
     cells.push({type: 'config'});
   }
@@ -121,19 +124,27 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit, OnChanges {
-  @Input() public data: any;
+  @Input() public data: any[];
   @Input() public config: ListConfig;
   @Input() public listCells: ListCell[];
   public displayedColumns: string[];
+  public isGroupActions: boolean;
   public dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) public paginator: MatPaginator;
   @ViewChild(MatSort) public sort: MatSort;
   @Output() public sorted: EventEmitter<Sort> = new EventEmitter<Sort>();
   @Output() public pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
   @Output() public action: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public groupAction: EventEmitter<any> = new EventEmitter<any>();
   public node: Object;
+  public forms: any = {};
+  public formsSelectAll: any = {};
+
+  public constructor() {
+  }
 
   public ngOnInit() {
+
   }
 
   public ngOnChanges(): void {
@@ -147,6 +158,17 @@ export class ListComponent implements OnInit, OnChanges {
           .filter(item => item.columnDef && this.config.excludedFields.indexOf(item.columnDef) < 0)
           .map(x => x.columnDef);
       }
+
+      const total = this.data.length;
+      this.listCells.filter(cell => cell.type === 'checkbox').forEach(cell => {
+        const formConfig: Object = {};
+        this.forms[cell.columnDef] = [];
+        for (let i = 0; i < total; i++) {
+          this.forms[cell.columnDef][i] = false;
+        }
+      });
+      this.isGroupActions = Object.keys(this.forms).length > 0;
+
       // this.dataSource.paginator = this.paginator;
       // this.dataSource.paginator.pageSize = this.config.pageSize;
       // this.dataSource.paginator.pageIndex = this.config.pageIndex;
@@ -167,18 +189,42 @@ export class ListComponent implements OnInit, OnChanges {
   }
 
   public onPaginate(event: PageEvent): void {
+    for (const key of Object.keys(this.formsSelectAll)) {
+      this.formsSelectAll[key] = false;
+    }
     this.config.pageSize = event.pageSize;
     this.config.pageIndex = event.pageIndex;
     this.pageEvent.emit(event);
   }
 
   public getIndex(i): void {
-    return i + 1 + (this.config.pageIndex > 0 ? this.config.pageIndex - 1 : 0) * this.config.pageSize;
+    return i + 1 + this.config.pageIndex * this.config.pageSize;
   }
 
   public getHeader(column: ListCell, header: string = null, action: boolean = null): string {
     if (header == null) {
       header = column.header;
+    }
+    if (action == null) {
+      action = column.usePrefix;
+    }
+    return action ? `${this.config.translatePrefix}${header}` : header;
+  }
+
+  public onSelect(event: MatCheckboxChange, cell: ListCell): void {
+    this.formsSelectAll[cell.columnDef] = false;
+  }
+
+  public onSelectAllToggle(event: MatCheckboxChange, cell: ListCell): void {
+    const total = this.data.length;
+    for (let i = 0; i < total; i++) {
+      this.forms[cell.columnDef][i] = event.checked;
+    }
+  }
+
+  public getSelectAllHeader(column: ListCell, header: string = 'list.selectAll', action: boolean = false): string {
+    if (this.config['selectAllLabel']) {
+      header = this.config['selectAllLabel'];
     }
     if (action == null) {
       action = column.usePrefix;
@@ -197,20 +243,39 @@ export class ListComponent implements OnInit, OnChanges {
   }
 
   public getActionLink(column: any, action: any, row: any): any {
-    if (typeof action.getAction === 'function') {
+    if (action && typeof action.getAction === 'function') {
       return action.getAction(action, row);
-    } else if (typeof column.getAction === 'function') {
+    } else if (column && typeof column.getAction === 'function') {
       return column.getAction(action, row);
     } else {
       return ['/'];
     }
   }
 
-  public onAction(data: Object, action: any, column: any, event): void {
+  public onAction(data: Object, action: any, column: ListCell, event): void {
     this.action.emit({
       data: data,
       action: action,
       column: column,
+      event: event
+    });
+  }
+
+  public getGroupActionLink(column: any, action: any): any {
+    if (action && typeof action.getAction === 'function') {
+      return action.getAction(action, this.forms[column.columnDef]);
+    } else if (column && typeof column.getAction === 'function') {
+      return column.getAction(action, this.forms[column.columnDef]);
+    } else {
+      return ['/'];
+    }
+  }
+
+  public onGroupAction(action: any, cell: ListCell, event): void {
+    this.groupAction.emit({
+      data: this.forms[cell.columnDef],
+      action: action,
+      column: cell,
       event: event
     });
   }
@@ -227,10 +292,11 @@ export class ListComponent implements OnInit, OnChanges {
         }
       });
     }
-    this.config =  <ListConfig> {
+    this.config = <ListConfig> {
       ...{
         count: 0,
         columns: [],
+        actions: [],
         sortHeaders: [],
         excludedSortHeaders: [],
         responsive: true,
@@ -240,7 +306,7 @@ export class ListComponent implements OnInit, OnChanges {
         fullSort: false,
         pageSizeOptions: [5, 10, 15, 25],
         pageSize: 10,
-        pageIndex: 0,
+        pageIndex: 0
       }, ...this.findConfig(), ...this.config
     };
 

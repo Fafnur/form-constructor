@@ -84,7 +84,8 @@
     "empty": "Collection is empty",
     "actions": "Actions",
     "filter": "Filter",
-    "number": "№"
+    "number": "№",
+    "selectAll": ""
   },
   "paginator": {
     "itemsPerPage": "Items per page",
