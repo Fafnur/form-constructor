@@ -1,5 +1,5 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, TemplateRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 
@@ -22,6 +22,7 @@ export class FormComponent implements OnInit, OnDestroy {
   @Input() public formNodeConfig: FormNodeConfig;
   @Input() public parentFormNode: FormNode;
   public formNode: FormNode;
+  @HostBinding('attr.class') public class = 'fc-form';
   private subscription: Subscription;
   private forms: Object = {};
   private toggles: Object = {};
@@ -127,9 +128,12 @@ export class FormComponent implements OnInit, OnDestroy {
     return placeholder;
   }
 
+  public getErrors(errors: {[key: string]: any}): string[] {
+    return errors ? Object.keys(errors).filter(error => error !== 'required') : [];
+  }
+
   public getErrorMessage(type: string, fieldNode: FieldNode): string {
     let errorMessage: string = '';
-
     if ( (fieldNode.options['error'] && fieldNode.options['error'][type]) || fieldNode.options['errorTranslate']) {
       errorMessage = fieldNode.options['error'][type];
     } else if (this.formNode.config.autoErrors) {
@@ -154,8 +158,19 @@ export class FormComponent implements OnInit, OnDestroy {
     return errorMessage;
   }
 
+  public getMask(fieldNode: FieldNode): Object {
+    return fieldNode.options['mask'] ? fieldNode.options['mask'] : null;
+  }
+  public getMaskPrefix(fieldNode: FieldNode): Object {
+    return fieldNode.options['maskPrefix'] ? fieldNode.options['maskPrefix'] : null;
+  }
+
   public getChoices(fieldNode: FieldNode): any[] {
     return fieldNode.options['choices'] ? Object.assign([], fieldNode.options['choices']) : [];
+  }
+
+  public getInputType(fieldNode: FieldNode): string {
+    return fieldNode.options['inputType'] ? fieldNode.options['inputType'] : 'text';
   }
 
   public onSelectCheckbox(fieldNode: FieldNode, choice: any, event): void {

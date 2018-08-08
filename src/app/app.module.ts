@@ -3,7 +3,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatCardModule, MatDialogModule, MatExpansionModule, MatMenuModule, MatProgressSpinnerModule, MatTabsModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatDialogModule,
+  MatExpansionModule,
+  MatMenuModule,
+  MatProgressSpinnerModule,
+  MatTabsModule
+} from '@angular/material';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { FormConstructorModule } from 'ftm-pm/form-constructor';
 
@@ -72,7 +80,7 @@ export function exportTranslateStaticLoader(http: HttpClient, transferState: Tra
           deps: [HttpClient, TransferState]
         }
       }
-    ),
+    )
   ],
   providers: [
     UserService

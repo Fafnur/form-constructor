@@ -4386,6 +4386,12 @@ ng-packagr@^3.0.0-rc.2:
     uglify-js "^3.0.7"
     update-notifier "^2.3.0"
 
+ngx-mask@^6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/ngx-mask/-/ngx-mask-6.1.2.tgz#b9df4409255de7e4ac9942a174a1929259942cb4"
+  dependencies:
+    tslib "^1.9.0"
+
 no-case@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"

@@ -1,99 +1,61 @@
 <ng-template #textTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
-  <ng-container *ngIf="component.options.translate">
-    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
-      <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-             [readonly]="component.options.readOnly">
-      <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) | translate }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) | translate }}
-      </mat-error>
-    </mat-form-field>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
-    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
-      <input matInput placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-             [readonly]="component.options.readOnly">
-      <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) }}
-      </mat-error>
-    </mat-form-field>
-  </ng-container>
+  <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+    <div matPrefix class="mat-form-field-prefix" *ngIf="component.options.prefixIcon">
+      <mat-icon>{{ component.options.prefixIcon }}</mat-icon>
+    </div>
+    <span matPrefix *ngIf="component.options.prefix">
+      {{ component.options.prefix | translate }}
+    </span>
+    <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control" type="{{ getInputType(component) }}"
+           [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" prefix="{{ getMaskPrefix(component) }}" [mask]="getMask(component)"
+           [readonly]="component.options.readOnly">
+    <div matSuffix class="mat-form-field-prefix" *ngIf="component.options.suffixIcon">
+      <mat-icon>{{ component.options.suffixIcon }}</mat-icon>
+    </div>
+    <span matSuffix *ngIf="component.options.suffix">
+      {{ component.options.suffix | translate }}
+    </span>
+    <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+    <mat-error *ngFor="let error of getErrors(component.control.errors)">
+      {{ getErrorMessage(error, component) | translate }}
+    </mat-error>
+    <mat-error *ngIf="component.control.hasError('required')">
+      {{ getErrorMessage('required', component) | translate }}
+    </mat-error>
+  </mat-form-field>
 </ng-template>
 
 <ng-template #textareaTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
-  <ng-container *ngIf="component.options.translate">
-    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+  <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <textarea matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
                 [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
                 [readonly]="component.options.readOnly">
       </textarea>
-      <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) | translate }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) | translate }}
-      </mat-error>
-    </mat-form-field>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
-    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
-      <textarea matInput placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
-                [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-                [readonly]="component.options.readOnly"></textarea>
-      <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) }}
-      </mat-error>
-    </mat-form-field>
-  </ng-container>
+    <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+    <mat-error *ngFor="let error of getErrors(component.control.errors)">
+      {{ getErrorMessage(error, component) | translate }}
+    </mat-error>
+    <mat-error *ngIf="component.control.hasError('required')">
+      {{ getErrorMessage('required', component) | translate }}
+    </mat-error>
+  </mat-form-field>
 </ng-template>
 
 <ng-template #datepickerTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
-  <ng-container *ngIf="component.options.translate">
-    <mat-form-field class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-      <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}"
-             [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-             [readonly]="component.options.readOnly">
-      <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
-      <mat-datepicker #datepicker></mat-datepicker>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) | translate }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) | translate }}
-      </mat-error>
-    </mat-form-field>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
-    <mat-form-field class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-      <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) }}"
-             [formControl]="component.control"
-             [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-             [readonly]="component.options.readOnly">
-      <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
-      <mat-datepicker #datepicker></mat-datepicker>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) }}
-      </mat-error>
-    </mat-form-field>
-  </ng-container>
+  <mat-form-field class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
+    <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}"
+           [formControl]="component.control"
+           [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+           [readonly]="component.options.readOnly">
+    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
+    <mat-error *ngFor="let error of getErrors(component.control.errors)">
+      {{ getErrorMessage(error, component) | translate }}
+    </mat-error>
+    <mat-error *ngIf="component.control.hasError('required')">
+      {{ getErrorMessage('required', component) | translate }}
+    </mat-error>
+  </mat-form-field>
 </ng-template>
 
 <ng-template #radioTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
@@ -104,50 +66,28 @@
         component, '') | translate }}
       </div>
     </ng-container>
-    <ng-container *ngIf="component.options.translate">
-      <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-        <mat-radio-group [formControl]="component.control" name="{{config.formName}}-{{ component.name }}">
-          <ng-container *ngIf="!component.options['choices']">
-            {{ getErrorMessage('choicesRequired', component) | translate }}
+    <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
+      <mat-radio-group [formControl]="component.control" name="{{config.formName}}-{{ component.name }}">
+        <ng-container *ngIf="!component.options['choices']">
+          {{ getErrorMessage('choicesRequired', component) | translate }}
+        </ng-container>
+        <ng-container *ngIf="component.options['choices']">
+          <ng-container *ngFor="let choice of component.options['choices']">
+            <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{
+              choice.label | translate }}
+            </mat-radio-button>
           </ng-container>
-          <ng-container *ngIf="component.options['choices']">
-            <ng-container *ngFor="let choice of component.options['choices']">
-              <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{
-                choice.label | translate }}
-              </mat-radio-button>
-            </ng-container>
-          </ng-container>
-        </mat-radio-group>
-        <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-          {{ getErrorMessage('pattern', component) | translate }}
+        </ng-container>
+      </mat-radio-group>
+      <ng-container *ngIf="component.control.errors && !component.control.hasError('required')">
+        <mat-error *ngFor="let error of getErrors(component.control.errors)">
+          {{ getErrorMessage(error, component) | translate }}
         </mat-error>
-        <mat-error *ngIf="component.control.hasError('required')">
-          {{ getErrorMessage('required', component) | translate }}
-        </mat-error>
-      </div>
-    </ng-container>
-    <ng-container *ngIf="!component.options.translate">
-      <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-        <mat-radio-group [formControl]="component.control" name="{{config.formName}}-{{ component.name }}">
-          <ng-container *ngIf="!component.options['choices']">
-            {{ getErrorMessage('choicesRequired', component) }}
-          </ng-container>
-          <ng-container *ngIf="component.options['choices']">
-            <ng-container *ngFor="let choice of component.options['choices']">
-              <mat-radio-button value="{{ choice.value }}" [checked]="choice.value === component.control.value">{{
-                choice.label }}
-              </mat-radio-button>
-            </ng-container>
-          </ng-container>
-        </mat-radio-group>
-        <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-          {{ getErrorMessage('pattern', component) }}
-        </mat-error>
-        <mat-error *ngIf="component.control.hasError('required')">
-          {{ getErrorMessage('required', component) }}
-        </mat-error>
-      </div>
-    </ng-container>
+      </ng-container>
+      <mat-error *ngIf="component.control.hasError('required')">
+        {{ getErrorMessage('required', component) | translate }}
+      </mat-error>
+    </div>
   </div>
 </ng-template>
 
@@ -159,54 +99,33 @@
         component, '') | translate }}
       </div>
     </ng-container>
-    <ng-container *ngIf="component.options.translate">
-      <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-        <ng-container *ngIf="!component.options['choices']">
-          {{ getErrorMessage('choicesRequired', component) | translate }}
+    <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
+      <ng-container *ngIf="!component.options['choices']">
+        {{ getErrorMessage('choicesRequired', component) | translate }}
+      </ng-container>
+      <ng-container *ngIf="component.options['choices']">
+        <ng-container *ngFor="let choice of component.options['choices']; let i = index;">
+          <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}"
+                        [checked]="choice.selected" (change)="onSelectCheckbox(component, choice, $event)">{{
+            choice.label | translate }}
+          </mat-checkbox>
         </ng-container>
-        <ng-container *ngIf="component.options['choices']">
-          <ng-container *ngFor="let choice of component.options['choices']; let i = index;">
-            <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}"
-                          [checked]="choice.selected" (change)="onSelectCheckbox(component, choice, $event)">{{
-              choice.label | translate }}
-            </mat-checkbox>
-          </ng-container>
-        </ng-container>
-        <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-          {{ getErrorMessage('pattern', component) | translate }}
+      </ng-container>
+      <ng-container *ngIf="component.control.errors && !component.control.hasError('required')">
+        <mat-error *ngFor="let error of getErrors(component.control.errors)">
+          {{ getErrorMessage(error, component) | translate }}
         </mat-error>
-        <mat-error *ngIf="component.control.hasError('required')">
-          {{ getErrorMessage('required', component) | translate }}
-        </mat-error>
-      </div>
-    </ng-container>
-    <ng-container *ngIf="!component.options.translate">
-      <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-        <ng-container *ngIf="!component.options['choices']">
-          {{ getErrorMessage('choicesRequired', component) }}
-        </ng-container>
-        <ng-container *ngIf="component.options['choices']">
-          <ng-container *ngFor="let choice of component.options['choices'];">
-            <mat-checkbox name="{{config.formName}}-{{ component.name }}" value="{{ choice.value }}"
-                          [checked]="choice.selected"
-                          (change)="onSelectCheckbox(component, choice, $event)">{{ choice.label }}
-            </mat-checkbox>
-          </ng-container>
-        </ng-container>
-        <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-          {{ getErrorMessage('pattern', component) }}
-        </mat-error>
-        <mat-error *ngIf="component.control.hasError('required')">
-          {{ getErrorMessage('required', component) }}
-        </mat-error>
-      </div>
-    </ng-container>
+      </ng-container>
+      <mat-error *ngIf="component.control.hasError('required')">
+        {{ getErrorMessage('required', component) | translate }}
+      </mat-error>
+    </div>
   </div>
 </ng-template>
 
 <ng-template #selectTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode"
              let-language="language">
-  <div *ngIf="component.options.translate" [ngClass]="{'select-dialog': component.options['dialog'], 'select-expansion-panel': component.options['expansionPanel']}">
+  <div [ngClass]="{'select-dialog': component.options['dialog'], 'select-expansion-panel': component.options['expansionPanel']}">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <mat-select placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
                   [required]="config.required" [errorStateMatcher]="matcher">
@@ -215,8 +134,8 @@
           {{ component.options.mapped ? choice[component.options.mapped] : choice.toString() }}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) | translate }}
+      <mat-error *ngFor="let error of getErrors(component.control.errors)">
+        {{ getErrorMessage(error, component) | translate }}
       </mat-error>
       <mat-error *ngIf="component.control.hasError('required')">
         {{ getErrorMessage('required', component) | translate }}
@@ -232,97 +151,41 @@
         *ngTemplateOutlet="getTemplate(component.options['expansionPanel'], expansionPanelTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
     </div>
   </div>
-  <div *ngIf="!component.options.translate" [ngClass]="{'select-dialog': component.options['dialog'], 'select-expansion-panel': component.options['expansionPanel']}">
-    <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
-      <mat-select placeholder="{{ getPlaceholder(component) }}" [formControl]="component.control"
-                  [required]="config.required" [errorStateMatcher]="matcher" [disabled]="!!component.options.disabled">
-        <mat-option>--</mat-option>
-        <mat-option *ngFor="let choice of  component.options['choices']" [value]="choice[component.options.mappedId]">
-          {{ component.options.mapped ? choice[component.options.mapped] : choice.toString() }}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="component.control.hasError('pattern') && !component.control.hasError('required')">
-        {{ getErrorMessage('pattern', component) }}
-      </mat-error>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) }}
-      </mat-error>
-      <mat-hint *ngIf="component.options.hint">{{ component.options.hint }}</mat-hint>
-    </mat-form-field>
-    <div class="select-action-button" *ngIf="component.options['dialog']">
-      <ng-container
-        *ngTemplateOutlet="getTemplate(component.options['dialog'], dialogTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
-    </div>
-    <div class="select-action-button" *ngIf="component.options['expansionPanel']">
-      <ng-container
-        *ngTemplateOutlet="getTemplate(component.options['expansionPanel'], expansionPanelTemplate); context: getContext('_' + component.type.type + '_' + component.name, language, component)"></ng-container>
-    </div>
-  </div>
 </ng-template>
 
 <ng-template #dialogTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-parent="parent">
-  <ng-container *ngIf="component.options.translate">
-    <button type="button" mat-raised-button color="{{ component.options.button.color }}"
-            (click)="onOpenDialog($event, component, config, parent)">
-      {{ (component.options.button.label || component.name) | translate }}
-    </button>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
-    <button type="button" mat-raised-button color="{{ component.options.button.color }}"
-            (click)="onOpenDialog($event, component, config, parent)">
-      {{ (component.options.button.label || component.name) | translate }}
-    </button>
-  </ng-container>
+  <button type="button" mat-raised-button color="{{ component.options.button.color }}"
+          (click)="onOpenDialog($event, component, config, parent)">
+    {{ (component.options.button.label || component.name) | translate }}
+  </button>
 </ng-template>
 
 <ng-template #boolTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
-  <ng-container *ngIf="component.options.translate">
-    <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
-      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{
-        component.options.label | translate }}
-      </mat-checkbox>
-      <mat-error *ngIf="component.control.hasError('required') && !component.control.value">
-        {{ getErrorMessage('required', component) | translate }}
-      </mat-error>
-    </div>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
-    <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
-      <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{
-        component.options.label }}
-      </mat-checkbox>
-      <mat-error *ngIf="component.control.hasError('required')">
-        {{ getErrorMessage('required', component) }}
-      </mat-error>
-    </div>
-  </ng-container>
+  <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
+    <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{
+      component.options.label | translate }}
+    </mat-checkbox>
+    <mat-error *ngIf="component.control.hasError('required') && !component.control.value">
+      {{ getErrorMessage('required', component) | translate }}
+    </mat-error>
+  </div>
 </ng-template>
 
-<ng-template #expansionPanelTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-params="params" let-parent="parent">
-  <ng-container *ngIf="component.options.translate">
-    <button class="select-toggle-button" type="button" mat-raised-button color="{{ component.options.button.color }}"
-            (click)="onToggleExpansionPanel($event, component, parent)">
-      {{ (component.options.button.label || component.name || 'actions.open') | translate }}
-    </button>
-    <mat-expansion-panel [expanded]="isExpansionPanel(component, parent)">
-      <fc-form [formModel]="component.options['model']" [formNodeConfig]="component.options['formNodeConfig']" (created)="onExpansionPanelFormCreated($event, component, parent)"></fc-form>
-      <mat-action-row>
-        <button mat-raised-button (click)="onSaveExpansionPanel($event, component, parent)">{{ getFieldValue('action', 'label', component, 'actions.save', false) | translate }}</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-  </ng-container>
-  <ng-container *ngIf="!component.options.translate">
-    <button class="select-toggle-button" type="button" mat-raised-button color="{{ component.options.button.color }}"
-            (click)="onToggleExpansionPanel($event, component)">
-      {{ (component.options.button.label || component.name || 'actions.open') }}
-    </button>
-    <mat-expansion-panel [expanded]="isExpansionPanel(component, parent)">
-      <fc-form [formModel]="component.options['model']" [formNodeConfig]="component.options['formNodeConfig']" (created)="onExpansionPanelFormCreated($event, component, parent)"></fc-form>
-      <mat-action-row>
-        <button mat-raised-button (click)="onSaveExpansionPanel($event, component, parent)">{{ getFieldValue('action', 'label', component, 'actions.save', false) }}</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-  </ng-container>
+<ng-template #expansionPanelTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode"
+             let-params="params" let-parent="parent">
+  <button class="select-toggle-button" type="button" mat-raised-button color="{{ component.options.button.color }}"
+          (click)="onToggleExpansionPanel($event, component, parent)">
+    {{ (component.options.button.label || component.name || 'actions.open') | translate }}
+  </button>
+  <mat-expansion-panel [expanded]="isExpansionPanel(component, parent)">
+    <fc-form [formModel]="component.options['model']" [formNodeConfig]="component.options['formNodeConfig']"
+             (created)="onExpansionPanelFormCreated($event, component, parent)"></fc-form>
+    <mat-action-row>
+      <button mat-raised-button (click)="onSaveExpansionPanel($event, component, parent)">{{ getFieldValue('action',
+        'label', component, 'actions.save', false) | translate }}
+      </button>
+    </mat-action-row>
+  </mat-expansion-panel>
 </ng-template>
 
 <ng-template #imageTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">

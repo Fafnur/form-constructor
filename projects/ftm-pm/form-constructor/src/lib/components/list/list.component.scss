@@ -16,6 +16,7 @@ th.mat-header-cell {
 //  padding-left: 0;
 //}
 
+
 .paginator-actions {
   margin-bottom: 1rem;
 
@@ -29,7 +30,8 @@ th.mat-header-cell {
       width: inherit;
     }
   }
-  @media (min-width: 800px) {
+  @media (min-width: 960px) {
     margin-top: -3rem;
   }
 }
+

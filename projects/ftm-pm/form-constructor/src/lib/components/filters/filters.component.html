@@ -11,7 +11,7 @@
   </mat-form-field>
 </ng-template>
 
-<div *ngIf="formNode" [formGroup]="formNode.form" class="fc-filters {{ formNode.config['classes'] }}">
+<div *ngIf="formNode" [formGroup]="formNode.form" class="fc-filters-form {{ formNode.config['classes'] }}">
   <ng-container *ngFor="let control of getFilters()">
     <ng-container [ngSwitch]="control.type">
       <div class="fc-filter fc-filter-select" *ngSwitchCase="'select'">

@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 import { FormModel } from '../../models/form-model';
@@ -22,7 +22,7 @@ export class DialogComponent implements OnInit, OnDestroy {
   public formModel: FormModel;
   public formNode: FormNode;
   public formNodeConfig: FormNodeConfig;
-  // @ViewChild('dialogForm') dialogForm: FormComponent;
+  @HostBinding('attr.class') public class = 'fc-dialog';
 
   public constructor(private dialogRef: MatDialogRef<DialogComponent>,
                      @Inject(MAT_DIALOG_DATA) public dialogData: FCDialogOptions) {

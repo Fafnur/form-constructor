@@ -26,6 +26,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { TransferState } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxMaskModule } from 'ngx-mask';
 
 import { DialogComponent } from './components/dialog/dialog.component';
 import { FiltersComponent } from './components/filters/filters.component';
@@ -82,6 +83,7 @@ export function getMatPaginatorIntlService(translateService: TranslateService) {
     MatTableModule,
     MatTabsModule,
     RouterModule,
+    NgxMaskModule,
     TranslateModule.forChild({})
   ],
   declarations: [
@@ -96,7 +98,7 @@ export function getMatPaginatorIntlService(translateService: TranslateService) {
   ]
 })
 export class FormConstructorModule {
-  public static forRoot(config: FCServiceConfigInterface): ModuleWithProviders {
+  public static forRoot(config: FCServiceConfigInterface = {}): ModuleWithProviders {
     return {
       ngModule: FormConstructorModule,
       providers: [
