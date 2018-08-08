@@ -28,6 +28,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { DialogComponent } from './components/dialog/dialog.component';
+import { FiltersComponent } from './components/filters/filters.component';
 import { FormComponent } from './components/form/form.component';
 import { ListComponent } from './components/list/list.component';
 import { ViewComponent } from './components/view/view.component';
@@ -36,6 +37,7 @@ import { PaginatorIntlService } from './services/paginator-intl.service';
 import { DATE_FORMATS } from './utils/date-formats';
 
 const FC_COMPONENTS = [
+  FiltersComponent,
   FormComponent,
   ListComponent,
   ViewComponent
@@ -84,7 +86,7 @@ export function getMatPaginatorIntlService(translateService: TranslateService) {
   ],
   declarations: [
     ...FC_COMPONENTS,
-    ...FC_ENTRY_COMPONENTS
+    ...FC_ENTRY_COMPONENTS,
   ],
   exports: [
     ...FC_COMPONENTS

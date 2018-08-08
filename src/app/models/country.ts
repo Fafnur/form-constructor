@@ -1,14 +1,15 @@
 export const CountryChoices = [
   {
-    label: 'currency.rub',
-    value: 'rub'
+    label: 'country.ru',
+    value: 'ru'
   },
   {
-    label: 'currency.dollar',
-    value: 'dollar'
+    label: 'country.us',
+    value: 'us'
   },
   {
-    label: 'currency.pound',
-    value: 'pound'
+    label: 'country.en',
+    value: 'en'
   }
 ];
+

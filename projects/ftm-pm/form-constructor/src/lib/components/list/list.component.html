@@ -1,10 +1,11 @@
 <div class="list">
-  <ng-container *ngIf="config.filter">
-    <mat-form-field class="field-group field-group_wf">
-      <input matInput (keyup)="applyFilter($event.target.value)"
-             placeholder="{{ 'list.filter' | translate }}" autocomplete="off" name="list-filter">
-    </mat-form-field>
-  </ng-container>
+  <!--<ng-container *ngIf="config.filter">-->
+    <!--<mat-form-field class="field-group field-group_wf">-->
+      <!--<input matInput (keyup)="applyFilter($event.target.value)"-->
+             <!--placeholder="{{ 'list.filter' | translate }}" autocomplete="off" name="list-filter">-->
+    <!--</mat-form-field>-->
+  <!---->
+  <!--</ng-container>-->
   <div [ngClass]="{'table-responsive': config.responsive}">
     <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
       <ng-container *ngFor="let column of listCells; let i=index;" [matColumnDef]="column.columnDef">
@@ -100,7 +101,6 @@
       </ng-container>
     </ng-container>
   </div>
-
 
   <ng-content></ng-content>
 </div>

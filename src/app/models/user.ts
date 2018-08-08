@@ -12,7 +12,7 @@ import {
   ViewCell
 } from 'ftm-pm/form-constructor';
 
-import { TimestampableRestEntity } from './rest-entity';
+import { RestEntity } from './rest';
 import { CurrencyChoices } from './currency';
 import { CountryChoices } from './country';
 import { Client, ClientModel } from './client';
@@ -20,7 +20,7 @@ import { Client, ClientModel } from './client';
 /**
  * User
  */
-export class User extends TimestampableRestEntity {
+export class User extends RestEntity {
   public countryCode: string;
   public currencyCode: string;
   public firstname: string;
@@ -206,6 +206,36 @@ export const UserModel: FormModel = {
     }
   }
 };
+
+/**
+ * UserFilterModel
+ */
+export const UserFilterModel: FormModel = {
+  _config: {
+    localePrefix: 'user.form.'
+  },
+  countryCode: {
+    type: SelectType,
+    options: {
+      required: true,
+      validators: [],
+      mapped: 'label',
+      mappedId: 'value',
+      choices: CountryChoices
+    }
+  },
+  currencyCode: {
+    type: SelectType,
+    options: {
+      required: true,
+      validators: [],
+      mapped: 'label',
+      mappedId: 'value',
+      choices: CurrencyChoices
+    }
+  }
+};
+
 
 /**
  * UserList

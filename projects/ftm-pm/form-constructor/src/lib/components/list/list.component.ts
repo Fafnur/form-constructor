@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { MatCheckboxChange, MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import * as moment_ from 'moment/moment';
-
 const moment = moment_;
+
+import { FormModel } from '../../models/form-model';
+import { FormNodeConfig } from '../../models/form-node';
 
 export interface ListConfig {
   responsive?: boolean;
@@ -300,7 +302,7 @@ export class ListComponent implements OnInit, OnChanges {
         sortHeaders: [],
         excludedSortHeaders: [],
         responsive: true,
-        filter: true,
+        filter: false,
         isSort: true,
         excludedFields: [],
         fullSort: false,

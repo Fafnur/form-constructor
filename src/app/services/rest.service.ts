@@ -1,13 +1,17 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { EMPTY, Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/internal/operators';
 
-import { RestEntity } from '../models/rest-entity';
+import { RestCollection, RestEntity } from '../models/rest';
+import { RestCollectionResponse } from '../models/rest';
+import { RestErrorResponse } from '../models/rest';
 
 /**
  * RestService
  */
 export abstract class RestService<T extends RestEntity> {
+  public static reservedParams: string[] = ['sort', 'order', 'groups'];
+
   /**
    * Api path
    */
@@ -16,26 +20,17 @@ export abstract class RestService<T extends RestEntity> {
   /**
    * Headers
    */
-  protected headers: HttpHeaders;
+  protected headers: HttpHeaders = new HttpHeaders();
 
   /**
    * HttpClient
    */
   protected httpClient: HttpClient;
 
-  /**
-   * @param {string} url
-   */
-  protected constructor(url ?: string) {
+  public constructor(url: string) {
     this.url = url;
-    this.headers = new HttpHeaders();
   }
 
-  /**
-   * @template T
-   * @param entity
-   * @returns {T}
-   */
   public transform(entity: any): T {
     return entity;
   }
@@ -50,57 +45,74 @@ export abstract class RestService<T extends RestEntity> {
   }
 
   /**
-   * @param search
+   * @param {Object} search
    * @returns {HttpParams}
    */
-  public getParams(search: any = {}): HttpParams {
+  public getParams(search: Object = {}): HttpParams {
     let params = new HttpParams();
-    for (const propKey in search) {
-      if (propKey !== 'sort') {
+    for (const propKey of Object.keys(search).sort()) {
+      if (RestService.reservedParams.indexOf(propKey) < 0) {
         if (search.hasOwnProperty(propKey) && search[propKey] !== undefined) {
+          if (propKey === 'map') {
+            console.log(search);
+          }
           params = params.append(propKey, search[propKey].toString());
         }
       }
     }
+    if (search['order']) {
+      params = params.append(`order[${search['order'].name}]`, search['order'].direction);
+    }
     if (search['sort']) {
       search['sort'].forEach(sort => {
-        params = params.append(`_sort[${sort.name}]`, sort.value);
+        params = params.append(`order[${sort.name}]`, sort.direction);
       });
+    }
+    if (search['groups']) {
+      if (Array.isArray(search['groups'])) {
+        search['groups'].sort().forEach(group => {
+          params = params.append('groups[]', group);
+        });
+      } else {
+        params = params.append('groups[]', search['groups']);
+      }
     }
 
     return params;
   }
 
+  // public get<R extends RestEntity>(search ?: Object): Observable<RestCollection<R>>;
+
   /**
-   * @template T
-   * @param {any} search
-   * @returns {Observable<T[]>}
+   * @param search
+   * @returns {Observable<RestCollection<T>>}
    */
-  public get(search: any = {}): Observable<T[]> {
+  public get(search: Object = {}): Observable<RestCollection<T>> {
     const url = this.url;
     const options = {headers: this.headers, params: this.getParams(search)};
 
-    return this.httpClient.get<HttpResponse<T[]>>(url, options)
+    return this.httpClient.get<RestCollectionResponse<T>>(url, options)
       .pipe(
-        map((data: HttpResponse<T[]>) => this.extractData(data)),
-        catchError(this.handleError<T>())
+        map(data => this.extractDataCollection(data)),
+        catchError(this.handleError)
       );
   }
 
+  // public getOne<R extends RestEntity>(id: string, search: Object): Observable<R>;
+
   /**
-   * @template T
    * @param {string} id
-   * @param search
-   * @returns {Observable<T>}
+   * @param {Object} search
+   * @returns {Observable<T extends RestEntity>}
    */
-  public getOne(id: string, search: any = {}): Observable<T> {
+  public getOne(id: string, search: Object = {}): Observable<T> {
     const url = `${this.url}/${id}`;
     const options = {headers: this.headers, params: this.getParams(search)};
 
-    return this.httpClient.get<HttpResponse<T>>(url, options)
+    return this.httpClient.get<RestEntity>(url, options)
       .pipe(
-        map((data: HttpResponse<T>) => this.extractData(data)),
-        catchError(this.handleError<T>())
+        map(data => this.extractData(data)),
+        catchError(this.handleError)
       );
   }
 
@@ -115,9 +127,10 @@ export abstract class RestService<T extends RestEntity> {
     const url = `${this.url}/${field.name}/${field.value}`;
     const options = {headers: this.headers, params: this.getParams(search)};
 
-    return this.httpClient.get<T>(url, options)
+    return this.httpClient.get<RestEntity>(url, options)
       .pipe(
-        catchError(this.handleError<T>())
+        map(data => this.extractData(data)),
+        catchError(this.handleError)
       );
   }
 
@@ -130,10 +143,10 @@ export abstract class RestService<T extends RestEntity> {
     const transformedEntity: any = this.reverseTransform(entity);
     const options = {headers: this.headers, params: this.getParams(search)};
 
-    return this.httpClient.post<HttpResponse<T>>(this.url, JSON.stringify(transformedEntity), options)
+    return this.httpClient.post<RestEntity>(this.url, JSON.stringify(transformedEntity), options)
       .pipe(
         map(data => this.extractData(data)),
-        catchError(this.handleError<T>())
+        catchError(this.handleError)
       );
   }
 
@@ -146,11 +159,11 @@ export abstract class RestService<T extends RestEntity> {
     const headers = new HttpHeaders({
       'enctype': 'multipart/form-data'
     });
-    const options = {headers: this.headers, params: this.getParams(search)};
+    const options = {headers: headers, params: this.getParams(search)};
 
-    return this.httpClient.post<T>(this.url, formData, options)
+    return this.httpClient.post<any>(this.url, formData, options)
       .pipe(
-        catchError(this.handleError<T>())
+        catchError(this.handleError)
       );
   }
 
@@ -164,9 +177,9 @@ export abstract class RestService<T extends RestEntity> {
     const transformedEntity: any = this.reverseTransform(entity);
     const options = {headers: this.headers, params: this.getParams(search)};
 
-    return this.httpClient.patch<T>(url, JSON.stringify(transformedEntity), options)
+    return this.httpClient.patch<RestEntity>(url, JSON.stringify(transformedEntity), options)
       .pipe(
-        catchError(this.handleError<T>())
+        catchError(this.handleError)
       );
   }
 
@@ -180,8 +193,8 @@ export abstract class RestService<T extends RestEntity> {
     const transformedEntity: any = this.reverseTransform(entity);
     const options = {headers: this.headers, params: this.getParams(search)};
 
-    return this.httpClient.put<T>(url, JSON.stringify(transformedEntity), options).pipe(
-      catchError(this.handleError<T>())
+    return this.httpClient.put<RestEntity>(url, JSON.stringify(transformedEntity), options).pipe(
+      catchError(this.handleError)
     );
   }
 
@@ -195,44 +208,36 @@ export abstract class RestService<T extends RestEntity> {
     const options = {headers: this.headers, params: this.getParams(search)};
 
     return this.httpClient.delete<T>(url, options).pipe(
-      catchError(this.handleError<T>())
+      catchError(this.handleError)
     );
   }
 
   /**
-   * @param responseData
-   * @returns {any}
+   * @param {RestCollectionResponse<T extends RestEntity>} response
+   * @returns {RestCollection<T extends RestEntity>}
    */
-  protected extractData(responseData: any): any {
-    let data: any = responseData['data'];
-
-    if (Array.isArray(data)) {
-      data = data.map(entity => this.transform(entity));
-    } else {
-      data = this.transform(data);
-    }
+  protected extractDataCollection(response: RestCollectionResponse<T>): RestCollection<T> {
+    const data: RestCollection<T> = {items: [], total: 0};
+    data.items = response['items'].map(entity => this.transform(entity));
+    data.total = response['total'];
 
     return data;
   }
 
   /**
-   * Handle Http operation that failed.
-   *
-   * @param {string} operation
-   * @param {T} result
-   * @returns {(error: any) => Observable<T extends RestEntity>}
+   * @param {RestEntity} response
+   * @returns {T}
    */
-  protected handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+  protected extractData(response: RestEntity): T {
+    return this.transform(response);
+  }
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      // console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(error);
-    };
+  /**
+   * @param {HttpErrorResponse} errorResponse
+   * @returns {Observable<any>}
+   */
+  protected handleError(errorResponse: HttpErrorResponse): Observable<any> {
+    console.log(errorResponse);
+    return errorResponse.status > 0 ? throwError(Object.assign(new RestErrorResponse(), errorResponse.error)) : throwError(errorResponse);
   }
 }
