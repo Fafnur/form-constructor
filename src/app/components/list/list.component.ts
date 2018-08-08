@@ -2,10 +2,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Sort } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ListConfig, ListCell } from 'ftm-pm/form-constructor';
+import { FormModel, ListConfig, ListCell } from 'ftm-pm/form-constructor';
 import { Subscription } from 'rxjs';
 
-import { User, UserListCells } from '../../models/user';
+import { User, UserFilterModel, UserListCells } from '../../models/user';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -17,6 +17,8 @@ export class ListComponent implements OnInit, OnDestroy {
   public users: User[];
   public config: ListConfig;
   public listCells: ListCell[];
+  public filterModel: FormModel;
+  public queryParams: any;
   private subscription: Subscription;
 
   public constructor(private router: Router,
@@ -28,21 +30,16 @@ export class ListComponent implements OnInit, OnDestroy {
       isSort: true,
       pageIndex: 0,
       pageSize: 10,
-      count: 0,
+      filter: true,
+      count: 21,
       fullSort: true,
       sortHeaders: ['lastname']
     };
+    this.filterModel = UserFilterModel;
   }
 
   public ngOnInit(): void {
-    this.subscription.add(this.userService.get().subscribe(response => {
-      if (response instanceof HttpErrorResponse) {
-        this.redirect(['/500']);
-      }
-      if (response) {
-        this.config.count = response.length;
-      }
-    }));
+    this.queryParams = this.route.snapshot.queryParams;
     this.load();
   }
 
@@ -67,20 +64,40 @@ export class ListComponent implements OnInit, OnDestroy {
     this.load();
   }
 
+  public onFiltersChanged(data: any): void {
+    this.queryParams = {};
+    for (const key of Object.keys(data)) {
+      if (data[key] != null) {
+        this.queryParams[key] = data[key][this.filterModel[key]['options']['mappedId']];
+      }
+    }
+    this.router.navigate(['/list'], { queryParams: this.queryParams });
+    this.load();
+  }
+
   private load(): void {
-    this.subscription.add(this.userService.get({
-      '_page': this.config.pageIndex,
-      '_limit': this.config.pageSize,
-      '_sort': this.config.sort,
-      '_order': this.config.direction
-    }).subscribe(response => {
-        if (response instanceof HttpErrorResponse) {
-          this.redirect(['/500']);
-        }
+    // this.subscription.add(this.userService.get(this.queryParams).subscribe(response => {
+    //   this.config.count = response.items.length;
+    //   }, error => {
+    //     console.log('Error load count users');
+    //   })
+    // );
+    this.subscription.add(this.userService.get(this.getSearch()).subscribe(response => {
         if (response) {
-          this.users = response;
+          this.users = response.items;
         }
+      }, error => {
+        console.log('Error load users');
       })
     );
+  }
+
+  private getSearch(): any {
+    return {...this.queryParams, ...{
+        '_page': this.config.pageIndex,
+        '_limit': this.config.pageSize,
+        '_sort': this.config.sort,
+        '_order': this.config.direction
+      }};
   }
 }

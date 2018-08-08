@@ -2,6 +2,7 @@
   <h3>{{ 'user.list.title' | translate }}</h3>
   <mat-card>
     <div class="table-responsive">
+      <fc-filters [filterModel]="filterModel" (changed)="onFiltersChanged($event)"></fc-filters>
       <fc-list [data]="users" [listCells]="listCells" [config]="config" (sorted)="onSorted($event)"
                (pageEvent)="onPaginate($event)">
       </fc-list>

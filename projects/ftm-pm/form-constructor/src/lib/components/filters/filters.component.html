@@ -1,0 +1,24 @@
+<ng-template #selectTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-language="language">
+  <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+    <mat-select placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
+                [required]="config.required" [errorStateMatcher]="matcher" (selectionChange)="onFiltersChanged($event)">
+      <mat-option>--</mat-option>
+      <mat-option *ngFor="let choice of component.options['choices']" [value]="choice[component.options.mappedId]">
+        {{ (component.options.mapped ? choice[component.options.mapped] : choice.toString()) | translate }}
+      </mat-option>
+    </mat-select>
+    <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+  </mat-form-field>
+</ng-template>
+
+<div *ngIf="formNode" [formGroup]="formNode.form" class="fc-filters {{ formNode.config['classes'] }}">
+  <ng-container *ngFor="let control of getFilters()">
+    <ng-container [ngSwitch]="control.type">
+      <div class="fc-filter fc-filter-select" *ngSwitchCase="'select'">
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-content></ng-content>
+</div>

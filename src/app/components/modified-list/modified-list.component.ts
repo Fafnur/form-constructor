@@ -36,12 +36,9 @@ export class ModifiedListComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.subscription.add(this.userService.get().subscribe(response => {
-      if (response instanceof HttpErrorResponse) {
-        this.redirect(['/500']);
-      }
-      if (response) {
-        this.config.count = response.length;
-      }
+      this.config.count = response.items.length;
+    }, error =>  {
+      console.log('Error load count users');
     }));
     this.load();
   }
@@ -78,12 +75,9 @@ export class ModifiedListComponent implements OnInit, OnDestroy {
         '_sort': this.config.sort,
         '_order': this.config.direction
       }).subscribe(response => {
-        if (response instanceof HttpErrorResponse) {
-          this.redirect(['/500']);
-        }
-        if (response) {
-          this.users = response;
-        }
+        this.users = response.items;
+      }, error =>  {
+        console.log('Error load users');
       })
     );
   }

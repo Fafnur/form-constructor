@@ -1,12 +1,12 @@
 import { Validators } from '@angular/forms';
 import { FormModel, ListCell, RadioType, TextType, transformList } from 'ftm-pm/form-constructor';
 
-import { TimestampableRestEntity } from './rest-entity';
+import { RestEntity } from './rest';
 
 /**
  * Client
  */
-export class Client extends TimestampableRestEntity {
+export class Client extends RestEntity {
   public firstname: string;
   public middlename: string;
   public lastname: string;
