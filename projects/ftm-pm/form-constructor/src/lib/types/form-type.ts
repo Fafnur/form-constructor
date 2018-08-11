@@ -37,6 +37,10 @@ export interface FormTypeOptions {
   subProperty ?: boolean;
   property ?: string;
   choices ?: any[];
+  suffixIcon ?: string;
+  suffix ?: string;
+  prefixIcon ?: string;
+  prefix ?: string;
   title ?: any;
   templateRef ?: TemplateRef<any>;
 }

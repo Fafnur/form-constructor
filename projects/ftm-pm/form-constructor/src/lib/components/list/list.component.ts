@@ -1,10 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { MatCheckboxChange, MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment_ from 'moment/moment';
 const moment = moment_;
-
-import { FormModel } from '../../models/form-model';
-import { FormNodeConfig } from '../../models/form-node';
 
 export interface ListConfig {
   responsive?: boolean;
@@ -30,6 +28,8 @@ export interface ListConfig {
 
 export interface ListCell {
   columnDef: string;
+  style: Object;
+  format ?: string;
   type: string;
   header?: string;
   usePrefix?: boolean;
@@ -38,7 +38,21 @@ export interface ListCell {
 
   getAction?(): any;
 
-  dataName?(row): string;
+  dataName?(row, colunm ?: ListCell, data ?: any): string;
+}
+
+export interface ActionResponse {
+  data: Object;
+  action: Object;
+  cell: ListCell;
+  event ?: any;
+}
+
+export interface GroupActionResponse {
+  data: boolean[];
+  action: Object;
+  cell: ListCell;
+  event ?: any;
 }
 
 export function transformList(columns: any[], isNullValue: string = '-'): ListCell[] {
@@ -47,6 +61,7 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
     if (typeof item === 'string') {
       conf = <ListConfig> {
         columnDef: item,
+        style: {},
         type: 'text',
         header: item,
         usePrefix: true,
@@ -65,6 +80,9 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
     } else {
       if (!item.header) {
         item.header = item.columnDef;
+      }
+      if (!item.style) {
+        item.style = {};
       }
       if (item.usePrefix == null) {
         item.usePrefix = true;
@@ -136,13 +154,14 @@ export class ListComponent implements OnInit, OnChanges {
   @ViewChild(MatSort) public sort: MatSort;
   @Output() public sorted: EventEmitter<Sort> = new EventEmitter<Sort>();
   @Output() public pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
-  @Output() public action: EventEmitter<any> = new EventEmitter<any>();
-  @Output() public groupAction: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public action: EventEmitter<ActionResponse> = new EventEmitter<ActionResponse>();
+  @Output() public groupAction: EventEmitter<GroupActionResponse> = new EventEmitter<GroupActionResponse>();
   public node: Object;
   public forms: any = {};
   public formsSelectAll: any = {};
+  @HostBinding('attr.class') public class = 'fc-list';
 
-  public constructor() {
+  public constructor(protected translateService: TranslateService) {
   }
 
   public ngOnInit() {
@@ -224,14 +243,22 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
-  public getSelectAllHeader(column: ListCell, header: string = 'list.selectAll', action: boolean = false): string {
-    if (this.config['selectAllLabel']) {
+  public clearSelect(selectId: string): void {
+    const total = this.data.length;
+    for (let i = 0; i < total; i++) {
+      this.forms[selectId][i] = false;
+    }
+    this.formsSelectAll[selectId] = false;
+  }
+
+  public getSelectAllHeader(column: ListCell, header: string = null, action: boolean = null): string {
+    if (!header && column.header == null && this.config['selectAllLabel']) {
       header = this.config['selectAllLabel'];
     }
     if (action == null) {
       action = column.usePrefix;
     }
-    return action ? `${this.config.translatePrefix}${header}` : header;
+    return action ? `${this.config.translatePrefix}${header}` : header ? header : '';
   }
 
   public sortData(sort: Sort): void {
@@ -254,11 +281,11 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
-  public onAction(data: Object, action: any, column: ListCell, event): void {
+  public onAction(data: Object, action: any, cell: ListCell, event): void {
     this.action.emit({
       data: data,
       action: action,
-      column: column,
+      cell: cell,
       event: event
     });
   }
@@ -273,13 +300,21 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
+  public getDataName(row, column): string {
+    return column.dataName(row, column, this.data, this.translateService);
+  }
+
   public onGroupAction(action: any, cell: ListCell, event): void {
     this.groupAction.emit({
       data: this.forms[cell.columnDef],
       action: action,
-      column: cell,
+      cell: cell,
       event: event
     });
+  }
+
+  public isGroupActionActive(cell: ListCell): boolean {
+    return this.forms[cell.columnDef].filter(item => item).length > 0;
   }
 
   private getConfig(): ListConfig {
@@ -304,6 +339,7 @@ export class ListComponent implements OnInit, OnChanges {
         responsive: true,
         filter: false,
         isSort: true,
+        selectAllLabel: 'list.selectAll',
         excludedFields: [],
         fullSort: false,
         pageSizeOptions: [5, 10, 15, 25],

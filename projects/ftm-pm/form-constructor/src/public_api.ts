@@ -15,7 +15,7 @@ export { FormConstructorService } from './lib/services/form-constructor.service'
 // Components
 export { FiltersComponent } from './lib/components/filters/filters.component';
 export { FormComponent } from './lib/components/form/form.component';
-export { ListComponent, ListCell, ListConfig, transformList } from './lib/components/list/list.component';
+export { ActionResponse, GroupActionResponse, ListComponent, ListCell, ListConfig, transformList } from './lib/components/list/list.component';
 export { ViewComponent, ViewConfig, ViewCell, transformView } from './lib/components/view/view.component';
 
 // Types

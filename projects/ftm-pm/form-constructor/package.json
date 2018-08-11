@@ -10,7 +10,7 @@
     "form contstructor",
     "angular forms"
   ],
-  "version": "0.0.24",
+  "version": "0.0.26",
   "peerDependencies": {
     "@angular/cdk": ">= 6.0.0",
     "@angular/common": ">= 6.0.0",
@@ -23,6 +23,7 @@
     "@ngx-translate/core": ">= 10.0.0",
     "@ngx-translate/http-loader": ">= 3.0.0",
     "moment": ">= 2.0.0",
+    "ngx-mask": ">= 6.0.0",
     "rxjs": ">= 6.0.0"
   },
   "devDependencies": {},

@@ -1,106 +1,105 @@
-<div class="list">
-  <!--<ng-container *ngIf="config.filter">-->
-    <!--<mat-form-field class="field-group field-group_wf">-->
-      <!--<input matInput (keyup)="applyFilter($event.target.value)"-->
-             <!--placeholder="{{ 'list.filter' | translate }}" autocomplete="off" name="list-filter">-->
-    <!--</mat-form-field>-->
-  <!---->
-  <!--</ng-container>-->
-  <div [ngClass]="{'table-responsive': config.responsive}">
-    <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-      <ng-container *ngFor="let column of listCells; let i=index;" [matColumnDef]="column.columnDef">
+<!--<ng-container *ngIf="config.filter">-->
+<!--<mat-form-field class="field-group field-group_wf">-->
+<!--<input matInput (keyup)="applyFilter($event.target.value)"-->
+<!--placeholder="{{ 'list.filter' | translate }}" autocomplete="off" name="list-filter">-->
+<!--</mat-form-field>-->
+<!---->
+<!--</ng-container>-->
+<div [ngClass]="{'table-responsive': config.responsive}">
+  <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+    <ng-container *ngFor="let column of listCells; let i=index;" [matColumnDef]="column.columnDef">
 
-        <ng-container [ngSwitch]="column.type">
-          <ng-container *ngSwitchCase="'checkbox'">
-            <th mat-header-cell *matHeaderCellDef class="mat-header-cell_chekbox">
-              <mat-checkbox class="" [(ngModel)]="formsSelectAll[column.columnDef]"
-                            (change)="onSelectAllToggle($event, column)">{{ getSelectAllHeader(column) | translate }}</mat-checkbox>
-            </th>
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            <ng-container *ngIf="config.isSort && config.sortHeaders.indexOf(column.columnDef) >= 0">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ getHeader(column) | translate }}</th>
-            </ng-container>
-            <ng-container *ngIf="!config.isSort || config.sortHeaders.indexOf(column.columnDef) < 0">
-              <th mat-header-cell *matHeaderCellDef> {{ getHeader(column) | translate }}</th>
-            </ng-container>
-          </ng-container>
+      <ng-container [ngSwitch]="column.type">
+        <ng-container *ngSwitchCase="'checkbox'">
+          <th mat-header-cell *matHeaderCellDef class="mat-header-cell_chekbox" [ngStyle]="column.style">
+            <mat-checkbox class="" [(ngModel)]="formsSelectAll[column.columnDef]"
+                          (change)="onSelectAllToggle($event, column)">{{ getSelectAllHeader(column) | translate }}</mat-checkbox>
+          </th>
         </ng-container>
-        <ng-container [ngSwitch]="column.type">
-          <ng-container *ngSwitchCase="'actions'">
-            <td mat-cell *matCellDef="let row">
-              <ng-container *ngFor="let action of column.actions">
-                <ng-container *ngIf="action.type === 'link'">
-                  <a mat-raised-button color="{{ action.color }}" [routerLink]="getActionLink(column, action, row)">
-                    {{ getHeader(column, action.label, action.usePrefix) | translate }}
-                  </a>
-                </ng-container>
-                <ng-container *ngIf="action.type === 'button'">
-                  <button mat-raised-button type="button" color="{{ action.color }}" (click)="onAction(row, action, column, $event)">
-                    {{ getHeader(column, action.label, action.usePrefix) | translate }}
-                  </button>
-                </ng-container>
-              </ng-container>
-            </td>
+        <ng-container *ngSwitchDefault>
+          <ng-container *ngIf="config.isSort && config.sortHeaders.indexOf(column.columnDef) >= 0">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header  [ngStyle]="column.style"> {{ getHeader(column) | translate }}</th>
           </ng-container>
-          <ng-container *ngSwitchCase="'bool'">
-            <td mat-cell *matCellDef="let row; let i=index;">
-              {{ (column.usePrefix ? config.translatePrefix + column.dataName(row) : column.dataName(row)) | translate
-              }}
-            </td>
-          </ng-container>
-          <ng-container *ngSwitchCase="'date'">
-            <td mat-cell *matCellDef="let row; let i=index;">
-              {{ column.dataName(row) | date:'dd.m.y' }}
-            </td>
-          </ng-container>
-          <ng-container *ngSwitchCase="'index'">
-            <td mat-cell *matCellDef="let row; let i=index;">
-              {{ getIndex(i) }}
-            </td>
-          </ng-container>
-          <ng-container *ngSwitchCase="'checkbox'">
-            <td mat-cell *matCellDef="let row; let i=index;" class="mat-cell_chekbox">
-              <div class="field-group field-checkbox">
-                <mat-checkbox name="{{ column.columnDef }}-{{i}}" [(ngModel)]="forms[column.columnDef][i]"
-                            (change)="onSelect($event, column)" [checked]="forms[column.columnDef][i]"></mat-checkbox>
-              </div>
-            </td>
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            <td mat-cell *matCellDef="let row">
-              {{ column.dataName(row) }}
-            </td>
+          <ng-container *ngIf="!config.isSort || config.sortHeaders.indexOf(column.columnDef) < 0">
+            <th mat-header-cell *matHeaderCellDef  [ngStyle]="column.style"> {{ getHeader(column) | translate }}</th>
           </ng-container>
         </ng-container>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
-
-  <mat-paginator class="mat-paginator_v1" [length]="config.count" [pageSize]="config.pageSize"
-                 [pageSizeOptions]="config.pageSizeOptions" (page)="onPaginate($event)">
-  </mat-paginator>
-
-  <div  class="paginator-actions" *ngIf="isGroupActions">
-    <ng-container *ngFor="let column of listCells">
-      <ng-container *ngIf="column.type === 'checkbox' && column['actions']">
-        <ng-container *ngFor="let action of column['actions']">
-          <ng-container *ngIf="action.type === 'link'">
-            <a mat-raised-button color="{{ action.color }}" [routerLink]="getGroupActionLink(column, action)">
-              {{ getHeader(column, action.label, action.usePrefix) | translate }}
-            </a>
-          </ng-container>
-          <ng-container *ngIf="action.type === 'button'">
-            <button mat-raised-button type="button" color="{{ action.color }}" (click)="onGroupAction(action, column, $event)">
-              {{ getHeader(column, action.label, action.usePrefix) | translate }}
-            </button>
-          </ng-container>
+      <ng-container [ngSwitch]="column.type">
+        <ng-container *ngSwitchCase="'actions'">
+          <td mat-cell *matCellDef="let row"  [ngStyle]="column.style">
+            <ng-container *ngFor="let action of column.actions">
+              <ng-container *ngIf="action.type === 'link'">
+                <a mat-raised-button color="{{ action.color }}" [routerLink]="getActionLink(column, action, row)">
+                  {{ getHeader(column, action.label, action.usePrefix) | translate }}
+                </a>
+              </ng-container>
+              <ng-container *ngIf="action.type === 'button'">
+                <button mat-raised-button type="button" color="{{ action.color }}" (click)="onAction(row, action, column, $event)">
+                  {{ getHeader(column, action.label, action.usePrefix) | translate }}
+                </button>
+              </ng-container>
+            </ng-container>
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'bool'">
+          <td mat-cell *matCellDef="let row; let i=index;"  [ngStyle]="column.style">
+            {{ (column.usePrefix ? config.translatePrefix + column.dataName(row) : column.dataName(row)) | translate }}
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'date'">
+          <td mat-cell *matCellDef="let row; let i=index;"  [ngStyle]="column.style">
+            {{ column.dataName(row) | date: column.format ? column.format : 'dd.MM.y' }}
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'index'">
+          <td mat-cell *matCellDef="let row; let i=index;"  [ngStyle]="column.style">
+            {{ getIndex(i) }}
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'checkbox'">
+          <td mat-cell *matCellDef="let row; let i=index;" class="mat-cell_chekbox"  [ngStyle]="column.style">
+            <div class="field-group field-checkbox">
+              <mat-checkbox name="{{ column.columnDef }}-{{i}}" [(ngModel)]="forms[column.columnDef][i]"
+                            (change)="onSelect($event, column)" [checked]="forms[column.columnDef][i]"></mat-checkbox>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <td mat-cell *matCellDef="let row" [ngStyle]="column.style">
+            {{ getDataName(row, column)  }}
+          </td>
         </ng-container>
       </ng-container>
     </ng-container>
-  </div>
-
-  <ng-content></ng-content>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>
+
+<mat-paginator class="mat-paginator_v1" [length]="config.count" [pageSize]="config.pageSize" [pageIndex]="config.pageIndex"
+               [pageSizeOptions]="config.pageSizeOptions" (page)="onPaginate($event)">
+</mat-paginator>
+
+<div  class="paginator-actions" *ngIf="isGroupActions">
+  <ng-container *ngFor="let column of listCells">
+    <ng-container *ngIf="column.type === 'checkbox' && column['actions']">
+      <ng-container *ngFor="let action of column['actions']">
+        <ng-container *ngIf="action.type === 'link'">
+          <a mat-raised-button color="{{ action.color }}" [disabled]="!isGroupActionActive(column)"
+             [routerLink]="getGroupActionLink(column, action)">
+            {{ getHeader(column, action.label, action.usePrefix) | translate }}
+          </a>
+        </ng-container>
+        <ng-container *ngIf="action.type === 'button'">
+          <button mat-raised-button type="button" color="{{ action.color }}" [disabled]="!isGroupActionActive(column)"
+                  (click)="onGroupAction(action, column, $event)">
+            {{ getHeader(column, action.label, action.usePrefix) | translate }}
+          </button>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>
+
+<ng-content></ng-content>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnDestroy, OnInit, Output, TemplateRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { ErrorStateMatcher } from '../../matchers/error-state.matcher';
@@ -17,6 +17,7 @@ export class FiltersComponent implements OnInit, OnDestroy {
   @Input() public filterModel: FormModel;
   @Input() public formNodeConfig: FormNodeConfig;
   public formNode: FormNode;
+  @HostBinding('attr.class') public class = 'fc-filters';
   private subscription: Subscription;
   @Output() private created: EventEmitter<FormNode>;
   @Output() private changed: EventEmitter<any>;
@@ -32,9 +33,9 @@ export class FiltersComponent implements OnInit, OnDestroy {
       throw new Error('Filter model is not found');
     }
     if (!this.formNodeConfig) {
-      this.formNodeConfig = <any>{classes: 'fc-filters_inline'};
+      this.formNodeConfig = <any>{classes: 'fc-filters-form_inline'};
     } else if (!this.formNodeConfig['classes']) {
-      this.formNodeConfig['classes'] = 'fc-filters_inline';
+      this.formNodeConfig['classes'] = 'fc-filters-form_inline';
     }
     this.formNode = this.fc.create(this.filterModel, this.formNodeConfig);
     this.created.emit(this.formNode);
