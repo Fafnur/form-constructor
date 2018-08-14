@@ -92,11 +92,19 @@ export class FormConstructorService implements FormConstructorInterface {
 
     switch (formType.type) {
       case 'date': {
-        config = [defaultValue.format(), options.validators];
+        if (options.disabled) {
+          config = [{value: defaultValue.format(), disabled: true}, options.validators];
+        } else {
+          config = [defaultValue.format(), options.validators];
+        }
         break;
       }
       default: {
-        config = [defaultValue, options.validators];
+        if (options.disabled) {
+          config = [{value: defaultValue, disabled: true}, options.validators];
+        } else {
+          config = [defaultValue, options.validators];
+        }
       }
     }
 
