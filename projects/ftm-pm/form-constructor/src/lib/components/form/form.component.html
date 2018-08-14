@@ -8,7 +8,7 @@
     </span>
     <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control" type="{{ getInputType(component) }}"
            [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" prefix="{{ getMaskPrefix(component) }}" [mask]="getMask(component)"
-           [readonly]="component.options.readOnly">
+           [readonly]="component.options.readOnly" (change)="onChanged($event, component)">
     <div matSuffix class="mat-form-field-prefix" *ngIf="component.options.suffixIcon">
       <mat-icon>{{ component.options.suffixIcon }}</mat-icon>
     </div>
@@ -29,7 +29,7 @@
   <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <textarea matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
                 [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-                [readonly]="component.options.readOnly">
+                 [readonly]="component.options.readOnly" (change)="onChanged($event, component)">
       </textarea>
     <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
     <mat-error *ngFor="let error of getErrors(component.control.errors)">
@@ -46,7 +46,7 @@
     <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}"
            [formControl]="component.control"
            [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-           [readonly]="component.options.readOnly">
+           [readonly]="component.options.readOnly" (change)="onChanged($event, component)">
     <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
     <mat-datepicker #datepicker></mat-datepicker>
     <mat-error *ngFor="let error of getErrors(component.control.errors)">
@@ -67,7 +67,7 @@
       </div>
     </ng-container>
     <div class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
-      <mat-radio-group [formControl]="component.control" name="{{config.formName}}-{{ component.name }}">
+      <mat-radio-group [formControl]="component.control" name="{{config.formName}}-{{ component.name }}" (change)="onChanged($event, component)">
         <ng-container *ngIf="!component.options['choices']">
           {{ getErrorMessage('choicesRequired', component) | translate }}
         </ng-container>
@@ -128,10 +128,10 @@
   <div [ngClass]="{'select-dialog': component.options['dialog'], 'select-expansion-panel': component.options['expansionPanel']}">
     <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <mat-select placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
-                  [required]="config.required" [errorStateMatcher]="matcher">
+                  [errorStateMatcher]="matcher" (selectionChange)="onChanged($event, component)">
         <mat-option>--</mat-option>
         <mat-option *ngFor="let choice of component.options['choices']" [value]="choice[component.options.mappedId]">
-          {{ component.options.mapped ? choice[component.options.mapped] : choice.toString() }}
+          {{ (component.options.mapped ? choice[component.options.mapped] : choice.toString()) | translate }}
         </mat-option>
       </mat-select>
       <mat-error *ngFor="let error of getErrors(component.control.errors)">
@@ -154,7 +154,7 @@
 </ng-template>
 
 <ng-template #dialogTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode" let-parent="parent">
-  <button type="button" mat-raised-button color="{{ component.options.button.color }}"
+  <button type="button" mat-raised-button color="{{ component.options.button.color }}" [disabled]="component.options.disabled"
           (click)="onOpenDialog($event, component, config, parent)">
     {{ (component.options.button.label || component.name) | translate }}
   </button>
@@ -162,7 +162,8 @@
 
 <ng-template #boolTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
   <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
-    <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value">{{
+    <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value"
+                  (change)="onChanged($event, component)">{{
       component.options.label | translate }}
     </mat-checkbox>
     <mat-error *ngIf="component.control.hasError('required') && !component.control.value">
@@ -174,7 +175,7 @@
 <ng-template #expansionPanelTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode"
              let-params="params" let-parent="parent">
   <button class="select-toggle-button" type="button" mat-raised-button color="{{ component.options.button.color }}"
-          (click)="onToggleExpansionPanel($event, component, parent)">
+          (click)="onToggleExpansionPanel($event, component, parent)" [disabled]="component.options.disabled">
     {{ (component.options.button.label || component.name || 'actions.open') | translate }}
   </button>
   <mat-expansion-panel [expanded]="isExpansionPanel(component, parent)">

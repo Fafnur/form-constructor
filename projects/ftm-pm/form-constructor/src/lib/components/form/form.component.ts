@@ -28,6 +28,7 @@ export class FormComponent implements OnInit, OnDestroy {
   private toggles: Object = {};
   @Output() private created: EventEmitter<FormNode>;
   @Output() private childChanged: EventEmitter<any>;
+  @Output() private changed: EventEmitter<any>;
 
   public constructor(public dialog: MatDialog,
                      public overlay: Overlay,
@@ -35,6 +36,7 @@ export class FormComponent implements OnInit, OnDestroy {
     this.subscription = new Subscription();
     this.created = new EventEmitter<FormNode>();
     this.childChanged = new EventEmitter<any>();
+    this.changed = new EventEmitter<any>();
   }
 
   public ngOnInit(): void {
@@ -184,6 +186,7 @@ export class FormComponent implements OnInit, OnDestroy {
     } else {
       fieldNode.control.setValue([]);
     }
+    this.onChanged(event, fieldNode);
   }
 
   public onOpenDialog(event, fieldNode: FieldNode, options: FormTypeOptions, parent ?: FieldNode): void {
@@ -214,7 +217,10 @@ export class FormComponent implements OnInit, OnDestroy {
           parent.options.choices.push(resultData);
           // this.formNode.updateOptions(parent.name, parent.options);
           parent.control.setValue(resultData[parent.options['mappedId']]);
+          this.childChanged.emit({event: event, data: resultData});
         }
+
+        this.changed.emit({event: event, data: fieldNode});
       }
     }));
   }
@@ -260,7 +266,12 @@ export class FormComponent implements OnInit, OnDestroy {
       if (fieldNode.options['autoClosed']) {
         this.onToggleExpansionPanel(null, fieldNode, parent);
       }
+      this.childChanged.emit({event: event, data: resultData});
     }
-    this.childChanged.emit(resultData);
+    this.onChanged(event, fieldNode);
+  }
+
+  public onChanged(event: Event, component: FieldNode): void {
+    this.changed.emit({event: event, data: component});
   }
 }
