@@ -222,14 +222,29 @@ export class ListComponent implements OnInit, OnChanges {
     return i + 1 + this.config.pageIndex * this.config.pageSize;
   }
 
-  public getHeader(column: ListCell, header: string = null, action: boolean = null): string {
+  public getHeader(column: ListCell, header: string = null, usePrefix: boolean = null): string {
     if (header == null) {
       header = column.header;
     }
-    if (action == null) {
-      action = column.usePrefix;
+    if (usePrefix == null) {
+      usePrefix = column.usePrefix;
     }
-    return action ? `${this.config.translatePrefix}${header}` : header;
+    return usePrefix ? `${this.config.translatePrefix}${header}` : header;
+  }
+
+  public getActionHeader(column: ListCell, action: any = {}, usePrefix: boolean = null, data: any = {}): string {
+    let header = action.label;
+    if (!header) {
+      header = column.header;
+    }
+    if (usePrefix == null) {
+      usePrefix = column.usePrefix;
+    }
+    if (action.entityLabel) {
+      header = data[action.entityLabel];
+      usePrefix = false;
+    }
+    return usePrefix ? `${this.config.translatePrefix}${header}` : header;
   }
 
   public onSelect(event: MatCheckboxChange, cell: ListCell): void {

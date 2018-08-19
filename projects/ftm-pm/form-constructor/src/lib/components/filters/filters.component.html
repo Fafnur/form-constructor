@@ -11,12 +11,50 @@
   </mat-form-field>
 </ng-template>
 
+<ng-template #boolTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <div class="field-group field-bool {{ getFieldValue('css', 'classes', component, '') }}">
+    <mat-checkbox name="{{config.formName}}-{{ component.name }}" [(ngModel)]="component.control.value"
+                  (change)="onFiltersChanged($event)">
+      {{ getFieldValue('label', 'value', component, '') | translate }}
+    </mat-checkbox>
+  </div>
+</ng-template>
+
+<ng-template #textTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+    <div matPrefix class="mat-form-field-prefix" *ngIf="component.options.prefixIcon">
+      <mat-icon>{{ component.options.prefixIcon }}</mat-icon>
+    </div>
+    <span matPrefix *ngIf="component.options.prefix">
+      {{ component.options.prefix | translate }}
+    </span>
+    <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control" type="{{ getInputType(component) }}"
+           [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" prefix="{{ getMaskPrefix(component) }}" [mask]="getMask(component)"
+           [readonly]="component.options.readOnly" (change)="onFiltersChanged($event)">
+    <div matSuffix class="mat-form-field-prefix" *ngIf="component.options.suffixIcon">
+      <mat-icon>{{ component.options.suffixIcon }}</mat-icon>
+    </div>
+    <span matSuffix *ngIf="component.options.suffix">
+      {{ component.options.suffix | translate }}
+    </span>
+    <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+  </mat-form-field>
+</ng-template>
+
 <div *ngIf="formNode" [formGroup]="formNode.form" class="fc-filters-form {{ formNode.config['classes'] }}">
   <ng-container *ngFor="let control of getFilters()">
     <ng-container [ngSwitch]="control.type">
       <div class="fc-filter fc-filter-select" *ngSwitchCase="'select'">
         <ng-container
           *ngTemplateOutlet="getTemplate(control, selectTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div class="fc-filter fc-filter-text" *ngSwitchCase="'text'">
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div class="fc-filter fc-filter-bool" *ngSwitchCase="'bool'">
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name)"></ng-container>
       </div>
     </ng-container>
   </ng-container>

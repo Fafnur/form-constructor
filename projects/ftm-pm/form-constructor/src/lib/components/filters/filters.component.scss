@@ -1,5 +1,4 @@
 .fc-filters-form {
-
   @media (min-width: 600px) {
     &_inline {
       display: flex;
@@ -10,11 +9,15 @@
 
 .fc-filter {
   @media (min-width: 600px) {
-    .fc-filters_inline & {
-      margin-right: 1rem;
+    .fc-filters-form_inline & {
+      margin: 0 1rem;
     }
-    .fc-filters_inline &:last-child {
-      margin-right: 0;
+  }
+}
+.fc-filter-bool {
+  @media (min-width: 600px) {
+    .fc-filters-form_inline & {
+      margin: auto 1rem;
     }
   }
 }

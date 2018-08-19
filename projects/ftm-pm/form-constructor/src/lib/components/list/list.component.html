@@ -30,14 +30,32 @@
           <td mat-cell *matCellDef="let row"  [ngStyle]="column.style">
             <ng-container *ngFor="let action of column.actions">
               <ng-container *ngIf="action.type === 'link'">
-                <a mat-raised-button color="{{ action.color }}" [routerLink]="getActionLink(column, action, row)">
-                  {{ getHeader(column, action.label, action.usePrefix) | translate }}
-                </a>
+                <ng-container [ngSwitch]="action.buttonType">
+                  <ng-container *ngSwitchCase="'raised'">
+                    <a mat-raised-button color="{{ action.color }}" [routerLink]="getActionLink(column, action, row)">
+                      {{ getActionHeader(column, action, action.usePrefix, row) | translate }}
+                    </a>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <a mat-button color="{{ action.color }}" [routerLink]="getActionLink(column, action, row)">
+                      {{ getActionHeader(column, action, action.usePrefix, row) | translate }}
+                    </a>
+                  </ng-container>
+                </ng-container>
               </ng-container>
               <ng-container *ngIf="action.type === 'button'">
-                <button mat-raised-button type="button" color="{{ action.color }}" (click)="onAction(row, action, column, $event)">
-                  {{ getHeader(column, action.label, action.usePrefix) | translate }}
-                </button>
+                <ng-container [ngSwitch]="action.buttonType">
+                  <ng-container *ngSwitchCase="'raised'">
+                    <button mat-raised-button type="button" color="{{ action.color }}" (click)="onAction(row, action, column, $event)">
+                      {{ getActionHeader(column, action, action.usePrefix, row) | translate }}
+                    </button>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <button mat-button type="button" color="{{ action.color }}" (click)="onAction(row, action, column, $event)">
+                      {{ getActionHeader(column, action, action.usePrefix, row) | translate }}
+                    </button>
+                  </ng-container>
+                </ng-container>
               </ng-container>
             </ng-container>
           </td>
@@ -88,13 +106,13 @@
         <ng-container *ngIf="action.type === 'link'">
           <a mat-raised-button color="{{ action.color }}" [disabled]="!isGroupActionActive(column)"
              [routerLink]="getGroupActionLink(column, action)">
-            {{ getHeader(column, action.label, action.usePrefix) | translate }}
+            {{ getActionHeader(column, action, action.usePrefix) | translate }}
           </a>
         </ng-container>
         <ng-container *ngIf="action.type === 'button'">
           <button mat-raised-button type="button" color="{{ action.color }}" [disabled]="!isGroupActionActive(column)"
                   (click)="onGroupAction(action, column, $event)">
-            {{ getHeader(column, action.label, action.usePrefix) | translate }}
+            {{ getActionHeader(column, action, action.usePrefix) | translate }}
           </button>
         </ng-container>
       </ng-container>

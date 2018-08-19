@@ -122,10 +122,13 @@ export class FiltersComponent implements OnInit, OnDestroy {
   public getFieldValue(type: string, value: string, fieldNode: FieldNode, defaultValue: any = null, isTranslate: boolean = true) {
     let fieldValue: any;
 
-    if (fieldNode.options && fieldNode.options[type] && fieldNode.options[type][value]) {
-      fieldValue = fieldNode.options[type][value];
+    if (fieldNode.options && fieldNode.options[type]) {
+      if (value && fieldNode.options[type][value]) {
+        fieldValue = fieldNode.options[type][value];
+      } else {
+        fieldValue = fieldNode.options[type];
+      }
     }
-
     if (!fieldValue && defaultValue) {
       fieldValue = defaultValue;
     } else {
@@ -141,5 +144,19 @@ export class FiltersComponent implements OnInit, OnDestroy {
 
   public onFiltersChanged($event): void {
     this.changed.emit(this.formNode.getData());
+  }
+
+  public onChanged(event: Event, component: FieldNode): void {
+    this.changed.emit({event: event, data: component});
+  }
+
+  public getMask(fieldNode: FieldNode): Object {
+    return fieldNode.options['mask'] ? fieldNode.options['mask'] : null;
+  }
+  public getMaskPrefix(fieldNode: FieldNode): Object {
+    return fieldNode.options['maskPrefix'] ? fieldNode.options['maskPrefix'] : null;
+  }
+  public getInputType(fieldNode: FieldNode): string {
+    return fieldNode.options['inputType'] ? fieldNode.options['inputType'] : 'text';
   }
 }
