@@ -14,11 +14,15 @@
       <div class="fc-view-label">
         <span class="fc-view-label__text">{{ getLabel(column) | translate }}</span>
       </div>
-      <div class="fc-view-value" *ngIf="node[column].translate">
-        {{ displayView(column) | translate }}
-      </div>
-      <div class="fc-view-value" *ngIf="!node[column].translate">
-        {{ displayView(column) }}
+      <div class="fc-view-value">
+        <ng-container [ngSwitch]="node[column].type">
+          <ng-container *ngSwitchCase="'date'">
+            {{ displayView(column) | date: getFormat(column) }}
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ displayView(column)  }}
+          </ng-container>
+        </ng-container>
       </div>
     </div>
   </ng-container>

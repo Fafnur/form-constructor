@@ -38,7 +38,7 @@ export interface ListCell {
 
   getAction?(): any;
 
-  dataName?(row, colunm ?: ListCell, data ?: any): string;
+  dataName?(row, colunm ?: ListCell, data ?: any, tr?: any): string;
 }
 
 export interface ActionResponse {
@@ -88,43 +88,45 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
         item.usePrefix = true;
       }
       if (typeof item.dataName !== 'function') {
-        item.dataName = (row) => {
-          if (typeof row === 'object') {
-            return row[item];
-          } else if (row) {
-            return row;
-          } else {
-            return item.isNullValue ? item.isNullValue : isNullValue;
-          }
-        };
-      }
-      switch (item.type) {
-        case 'bool':
-          item.dataName = (row) => {
-            if (typeof row === 'object') {
-              return !!row[item];
-            } else if (row != null) {
-              return row;
-            } else {
-              return false;
-            }
-          };
-          break;
-        case 'date':
-          item.dataName = (row) => {
-            if (typeof row === 'object') {
-              if (row[item]) {
-                return moment(new Date(row[item]));
+        switch (item.type) {
+          case 'bool':
+            item.dataName = (row) => {
+              if (typeof row === 'object') {
+                return !!row[item] ? 'actions.yes' : 'actions.false';
+              } else if (row != null) {
+                return !!row ? 'actions.yes' : 'actions.false';
+              } else {
+                return 'actions.false';
+              }
+            };
+            break;
+          case 'date':
+            item.dataName = (row) => {
+              if (typeof row === 'object') {
+                if (row[item]) {
+                  return moment(new Date(row[item]));
+                } else {
+                  return moment(new Date());
+                }
+              } else if (row) {
+                return moment(new Date(row));
               } else {
                 return moment(new Date());
               }
-            } else if (row) {
-              return moment(new Date(row));
-            } else {
-              return moment(new Date());
-            }
-          };
-          break;
+            };
+            break;
+          default: {
+            item.dataName = (row) => {
+              if (typeof row === 'object') {
+                return row[item];
+              } else if (row) {
+                return row;
+              } else {
+                return item.isNullValue ? item.isNullValue : isNullValue;
+              }
+            };
+          }
+        }
       }
     }
 
@@ -316,7 +318,7 @@ export class ListComponent implements OnInit, OnChanges {
   }
 
   public getDataName(row, column): string {
-    return column.dataName(row, column, this.data, this.translateService);
+    return column.subProperty ?  this.displayPropertyView(row, column) : column.dataName(row, column, this.data, this.translateService);
   }
 
   public onGroupAction(action: any, cell: ListCell, event): void {
@@ -380,5 +382,22 @@ export class ListComponent implements OnInit, OnChanges {
     const confs = this.listCells ? this.listCells.filter(item => item.type === 'config') : [];
 
     return confs.length ? <ListConfig>confs[0] : <ListConfig> {type: 'config'};
+  }
+
+  private displayPropertyView(data: any, column: ListCell): any {
+    let val = data;
+
+    if (column['property'] && val != null) {
+      const paths =  column['property'].split('.');
+      for (const path of paths) {
+        if (val.hasOwnProperty(path)) {
+          val = val[path];
+        } else {
+          break;
+        }
+      }
+    }
+
+    return column.dataName(val, column, data, this.translateService);
   }
 }

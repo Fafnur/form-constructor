@@ -1,5 +1,6 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import * as moment_ from 'moment/moment';
+import { TranslateService } from '@ngx-translate/core';
 const moment = moment_;
 
 export interface ViewConfig {
@@ -21,7 +22,7 @@ export interface ViewCell {
   levelType?: number;
   translate?: boolean;
 
-  dataName?(value: any, column ?: string, entity ?: any): string;
+  dataName?(value: any, column ?: string, entity ?: any, tr ?: any): string;
 }
 
 export function transformView(columns: any[], isNullValue: string = '-'): ViewCell[] {
@@ -123,7 +124,7 @@ export class ViewComponent implements OnInit {
   @HostBinding('attr.class') public class = 'fc-view';
   public node: Object;
 
-  public constructor() { }
+  public constructor(protected translateService: TranslateService) { }
 
   public ngOnInit(): void {
     this.config = this.getConfig();
@@ -141,7 +142,7 @@ export class ViewComponent implements OnInit {
   }
 
   public displayView(column: string): any {
-    return this.node[column].dataName(this.data[column], column, this.data);
+    return this.node[column].dataName(this.data[column], column, this.data, this.translateService);
   }
 
   public getChildConfig(column: string): Object {
@@ -181,7 +182,7 @@ export class ViewComponent implements OnInit {
       }
     }
 
-    return this.node[column].dataName(val, column, this.data);
+    return this.node[column].dataName(val, column, this.data, this.translateService);
   }
 
   public getLabel(column: string, header: string = null, action: boolean = null): string {
@@ -192,6 +193,15 @@ export class ViewComponent implements OnInit {
       action = this.node[column].usePrefix;
     }
     return action ? `${this.config.translatePrefix}${header}` : header;
+  }
+
+  public getFormat(column): string {
+    let format = this.node[column].format;
+    if (!format) {
+      format = 'dd.MM.y';
+    }
+
+    return format;
   }
 
   private getConfig(): ViewConfig {
