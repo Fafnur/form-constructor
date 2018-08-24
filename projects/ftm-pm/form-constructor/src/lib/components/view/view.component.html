@@ -17,7 +17,7 @@
       <div class="fc-view-value">
         <ng-container [ngSwitch]="node[column].type">
           <ng-container *ngSwitchCase="'date'">
-            {{ displayView(column) | date: getFormat(column) }}
+            {{ displayView(column) !== '-' ?  (displayView(column) | date: getFormat(column)): '-' }}
           </ng-container>
           <ng-container *ngSwitchDefault>
             {{ displayView(column)  }}

@@ -31,6 +31,9 @@
     <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control" type="{{ getInputType(component) }}"
            [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}" prefix="{{ getMaskPrefix(component) }}" [mask]="getMask(component)"
            [readonly]="component.options.readOnly" (change)="onFiltersChanged($event)">
+    <button mat-button *ngIf="component.control.value && component.options.inputType !== 'number'" matSuffix mat-icon-button aria-label="Clear" (click)="component.control.value=''">
+      <mat-icon>close</mat-icon>
+    </button>
     <div matSuffix class="mat-form-field-prefix" *ngIf="component.options.suffixIcon">
       <mat-icon>{{ component.options.suffixIcon }}</mat-icon>
     </div>
@@ -38,6 +41,17 @@
       {{ component.options.suffix | translate }}
     </span>
     <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+  </mat-form-field>
+</ng-template>
+
+<ng-template #datepickerTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <mat-form-field class="field-group {{ getFieldValue('css', 'classes', component, '') }}">
+    <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}"
+           [formControl]="component.control"
+           [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+           [readonly]="component.options.readOnly" (dateChange)="onFiltersChanged($event)">
+    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
   </mat-form-field>
 </ng-template>
 
@@ -55,6 +69,10 @@
       <div class="fc-filter fc-filter-bool" *ngSwitchCase="'bool'">
         <ng-container
           *ngTemplateOutlet="getTemplate(control, boolTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div class="fc-filter fc-filter-datepicker" *ngSwitchCase="'datepicker'">
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, datepickerTemplate); context: getContext(control.name)"></ng-container>
       </div>
     </ng-container>
   </ng-container>
