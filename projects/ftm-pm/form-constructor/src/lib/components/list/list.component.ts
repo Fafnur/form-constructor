@@ -24,6 +24,7 @@ export interface ListConfig {
   search?: Object;
   groups?: string[];
   actions?: any[];
+  paginator?: boolean;
 }
 
 export interface ListCell {
@@ -53,6 +54,14 @@ export interface GroupActionResponse {
   action: Object;
   cell: ListCell;
   event ?: any;
+}
+
+export function getBoolValue(val, cell: ListCell): string {
+  if (cell['subHead']) {
+    return val ? cell['choices'][1] : cell['choices'][0];
+  } else {
+    return val ? 'actions.yes' : 'actions.no';
+  }
 }
 
 export function transformList(columns: any[], isNullValue: string = '-'): ListCell[] {
@@ -92,11 +101,11 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
           case 'bool':
             item.dataName = (row) => {
               if (typeof row === 'object') {
-                return !!row[item] ? 'actions.yes' : 'actions.false';
+                return getBoolValue(!!row[item.columnDef], item);
               } else if (row != null) {
-                return !!row ? 'actions.yes' : 'actions.false';
+                return  getBoolValue(!!row, item);
               } else {
-                return 'actions.false';
+                return  getBoolValue(false, item);
               }
             };
             break;
@@ -355,6 +364,7 @@ export class ListComponent implements OnInit, OnChanges {
         excludedSortHeaders: [],
         responsive: true,
         filter: false,
+        paginator: true,
         isSort: true,
         selectAllLabel: 'list.selectAll',
         excludedFields: [],

@@ -10,7 +10,7 @@
     "form contstructor",
     "angular forms"
   ],
-  "version": "0.0.30",
+  "version": "0.0.31",
   "peerDependencies": {
     "@angular/cdk": ">= 6.0.0",
     "@angular/common": ">= 6.0.0",
