@@ -46,7 +46,7 @@
     <input matInput [matDatepicker]="datepicker" placeholder="{{ getPlaceholder(component) | translate }}"
            [formControl]="component.control"
            [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
-           [readonly]="component.options.readOnly" (change)="onChanged($event, component)">
+           [readonly]="component.options.readOnly" (dateChange)="onChanged($event, component)">
     <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
     <mat-datepicker #datepicker></mat-datepicker>
     <mat-error *ngFor="let error of getErrors(component.control.errors)">

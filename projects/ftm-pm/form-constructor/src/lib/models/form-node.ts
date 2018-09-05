@@ -2,6 +2,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { FormTypeInterface, FormTypeOptions, FormTypes } from '../types/form-type';
 import { FormField, FormModel } from './form-model';
+import { EventEmitter } from '@angular/core';
 
 /**
  * FieldNode
@@ -98,6 +99,8 @@ export class FormNode implements FormNodeInterface {
    * FormNodeConfig
    */
   public config: FormNodeConfig;
+
+  public updated: EventEmitter<string> = new EventEmitter<string>();
 
   public constructor(model: FormModel, controls: FormTypes, form: FormGroup,
                      languages: string[] = [], language = '', config: FormNodeConfig | Object = {}) {
@@ -295,6 +298,41 @@ export class FormNode implements FormNodeInterface {
     const newOptions = {...type.options, ...options};
     (<FormField>this.model[name]).options = newOptions;
     type.setOptions(newOptions);
+    if (options['validators']) {
+      if (newOptions.multiLanguage) {
+        this.languages.forEach(language => {
+          const fieldLangName = `${name}_${language}`;
+          this.form.controls[fieldLangName].setValidators(options['validators']);
+        });
+      } else {
+        this.form.controls[name].setValidators(options['validators']);
+      }
+    }
+    if (options['hidden'] != null) {
+      if (options['hidden'] ) {
+        // if (newOptions.multiLanguage) {
+        //   this.languages.forEach(language => {
+        //     const fieldLangName = `${name}_${language}`;
+        //     this.form.addControl(fieldLangName, this.model[fieldLangName]['savedControl']);
+        //   });
+        // } else {
+        //   this.form.addControl(name, this.model[name]['savedControl']);
+        // }
+      } else {
+        // if (newOptions.multiLanguage) {
+        //   this.languages.forEach(language => {
+        //     const fieldLangName = `${name}_${language}`;
+        //     this.model[fieldLangName]['savedControl'] = this.form.controls[fieldLangName];
+        //     this.form.removeControl(fieldLangName);
+        //   });
+        // } else {
+        //   this.model[name]['savedControl'] = this.form.controls[name];
+        //   this.form.removeControl(name);
+        // }
+      }
+    }
+
+    this.updated.emit(name);
   }
 
   private setField(formType: FormTypeInterface, fieldName: string, value: any): void {

@@ -82,3 +82,12 @@
     margin-bottom: 1rem;
   }
 }
+
+.fc-form .fc-form {
+  display: block;
+  padding: 1rem;
+
+  @media (min-width: 800px) {
+    padding: 2rem;
+  }
+}
