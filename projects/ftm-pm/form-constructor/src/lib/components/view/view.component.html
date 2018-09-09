@@ -5,7 +5,14 @@
         <span class="fc-view-label__text">{{ getLabel(column) | translate }}</span>
       </div>
       <div class="fc-view-value">
-        {{ displayPropertyView(column) }}
+        <ng-container [ngSwitch]="node[column].type">
+          <ng-container *ngSwitchCase="'date'">
+            {{ displayPropertyView(column) !== '-' ?  ( displayPropertyView(column) | date: node[column].format ? node[column].format : 'dd.MM.y') : displayView(column) }}
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ displayPropertyView(column)  }}
+          </ng-container>
+        </ng-container>
       </div>
     </div>
   </ng-container>
@@ -17,7 +24,7 @@
       <div class="fc-view-value">
         <ng-container [ngSwitch]="node[column].type">
           <ng-container *ngSwitchCase="'date'">
-            {{ displayView(column) !== '-' ?  (displayView(column) | date: getFormat(column)): '-' }}
+            {{ displayView(column) !== '-' ?  ( displayView(column) | date: node[column].format ? node[column].format : 'dd.MM.y') : displayView(column) }}
           </ng-container>
           <ng-container *ngSwitchDefault>
             {{ displayView(column)  }}
