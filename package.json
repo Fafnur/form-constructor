@@ -17,10 +17,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:library": "ng build --prod form-constructor",
+    "build:library": "ng build --prod form-constructor && yarn run build:add:scss",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "build:add:scss": "rm -rf dist/ftm-pm/form-constructor/scss && mkdir dist/ftm-pm/form-constructor/scss && cp -R projects/ftm-pm/form-constructor/src/scss/* dist/ftm-pm/form-constructor/scss",
     "mock:server": "node mocks/server.js"
   },
   "private": true,

@@ -12,6 +12,11 @@ export { FormField, FormModel } from './lib/models/form-model';
 // Services
 export { FormConstructorService } from './lib/services/form-constructor.service';
 
+// Pipes
+export { CurrencyPipe } from './lib/pipes/currency.pipe';
+
+export { CurrencyFormatterDirective } from './lib/directives/currency-formatter.directive';
+
 // Components
 export { FiltersComponent } from './lib/components/filters/filters.component';
 export { FormComponent } from './lib/components/form/form.component';
@@ -29,13 +34,15 @@ export {
 } from './lib/types/form-type';
 export { BoolType } from './lib/types/bool-type';
 export { CheckboxType } from './lib/types/checkbox-type';
+export { CurrencyType } from './lib/types/currency-type';
 export { DialogType } from './lib/types/dialog-type';
 export { DatepickerType } from './lib/types/datepicker-type';
 export { ExpansionPanelType } from './lib/types/expansion-panel-type';
 export { RadioType } from './lib/types/radio-type';
-export { TextType } from './lib/types/text-type';
-export { TextareaType } from './lib/types/textarea-type';
 export { SelectType } from './lib/types/select-type';
+export { TextareaType } from './lib/types/textarea-type';
+export { TextType } from './lib/types/text-type';
+export { HiddenType } from './lib/types/hidden-type';
 
 // Other
 export { ErrorStateMatcher } from './lib/matchers/error-state.matcher';

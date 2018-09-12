@@ -25,6 +25,33 @@
   </mat-form-field>
 </ng-template>
 
+<ng-template #currencyTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
+  <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
+    <div matPrefix class="mat-form-field-prefix" *ngIf="component.options.prefixIcon">
+      <mat-icon>{{ component.options.prefixIcon }}</mat-icon>
+    </div>
+    <span matPrefix *ngIf="component.options.prefix">
+      {{ component.options.prefix | translate }}
+    </span>
+    <input matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control" type="{{ getInputType(component) }}"
+           [errorStateMatcher]="matcher" name="{{config.formName}}-{{ component.name }}"
+           [readonly]="component.options.readOnly" (change)="onChanged($event, component)" fcCurrencyFormatter>
+    <div matSuffix class="mat-form-field-prefix" *ngIf="component.options.suffixIcon">
+      <mat-icon>{{ component.options.suffixIcon }}</mat-icon>
+    </div>
+    <span matSuffix *ngIf="component.options.suffix">
+      {{ component.options.suffix | translate }}
+    </span>
+    <mat-hint *ngIf="component.options.hint">{{ component.options.hint | translate }}</mat-hint>
+    <mat-error *ngFor="let error of getErrors(component.control.errors)">
+      {{ getErrorMessage(error, component) | translate }}
+    </mat-error>
+    <mat-error *ngIf="component.control.hasError('required')">
+      {{ getErrorMessage('required', component) | translate }}
+    </mat-error>
+  </mat-form-field>
+</ng-template>
+
 <ng-template #textareaTemplate let-component="fieldNode" let-config="formConfig" let-form="formNode">
   <mat-form-field class="form-field {{ getFieldValue('css', 'classes', component, '') }}">
       <textarea matInput placeholder="{{ getPlaceholder(component) | translate }}" [formControl]="component.control"
@@ -203,6 +230,10 @@
               <ng-container
                 *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name, language)"></ng-container>
             </div>
+            <div *ngSwitchCase="'currency'">
+              <ng-container
+                *ngTemplateOutlet="getTemplate(control, currencyTemplate); context: getContext(control.name, language)"></ng-container>
+            </div>
             <div *ngSwitchCase="'textarea'">
               <ng-container
                 *ngTemplateOutlet="getTemplate(control, textareaTemplate); context: getContext(control.name, language)"></ng-container>
@@ -249,6 +280,10 @@
       <div *ngSwitchCase="'text'">
         <ng-container
           *ngTemplateOutlet="getTemplate(control, textTemplate); context: getContext(control.name)"></ng-container>
+      </div>
+      <div *ngSwitchCase="'currency'">
+        <ng-container
+          *ngTemplateOutlet="getTemplate(control, currencyTemplate); context: getContext(control.name)"></ng-container>
       </div>
       <div *ngSwitchCase="'textarea'">
         <ng-container

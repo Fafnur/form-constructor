@@ -10,6 +10,7 @@ import { FormConstructorService } from '../../services/form-constructor.service'
 import { FormTypeInterface, FormTypeOptions } from '../../types/form-type';
 import { Guid } from '../../utils/guid';
 import { DialogComponent } from '../dialog/dialog.component';
+// import { CurrencyPipe } from '../../pipes/currency.pipe';
 
 @Component({
   selector: 'fc-form',

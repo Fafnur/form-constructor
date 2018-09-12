@@ -37,6 +37,9 @@ import { FC_SERVICE_CONFIG, FC_SERVICE_GUID, FCServiceConfigInterface, FormConst
 import { PaginatorIntlService } from './services/paginator-intl.service';
 import { DATE_FORMATS } from './utils/date-formats';
 
+import { CurrencyFormatterDirective } from './directives/currency-formatter.directive';
+import { CurrencyPipe } from './pipes/currency.pipe';
+
 const FC_COMPONENTS = [
   FiltersComponent,
   FormComponent,
@@ -51,6 +54,14 @@ const FC_ENTRY_COMPONENTS = [
 const FC_SERVICES = [
   FormConstructorService,
   PaginatorIntlService
+];
+
+const FC_PIPES = [
+  CurrencyPipe,
+];
+
+const FC_DIRECTIVES = [
+  CurrencyFormatterDirective,
 ];
 
 export function getMatPaginatorIntlService(translateService: TranslateService) {
@@ -89,9 +100,14 @@ export function getMatPaginatorIntlService(translateService: TranslateService) {
   declarations: [
     ...FC_COMPONENTS,
     ...FC_ENTRY_COMPONENTS,
+    ...FC_PIPES,
+    ...FC_DIRECTIVES,
   ],
   exports: [
-    ...FC_COMPONENTS
+    ...FC_COMPONENTS,
+    ...FC_PIPES,
+    ...FC_PIPES,
+    ...FC_DIRECTIVES
   ],
   entryComponents: [
     ...FC_ENTRY_COMPONENTS
