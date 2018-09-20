@@ -34,7 +34,7 @@ export class CurrencyPipe implements PipeTransform {
   parse(value: string, fractionSize: number = 2): string {
     let [integer, fraction = ''] = (value || '').split(this.DECIMAL_SEPARATOR);
 
-    integer = integer.replace(new RegExp(this.THOUSANDS_SEPARATOR, 'g'), ' ');
+    integer = integer.replace(new RegExp(this.THOUSANDS_SEPARATOR, 'g'), '');
 
     fraction = parseInt(fraction, 10) > 0 && fractionSize > 0
       ? this.DECIMAL_SEPARATOR + (fraction + PADDING).substring(0, fractionSize)

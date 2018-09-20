@@ -11,7 +11,7 @@ export class BoolType extends AbstractType {
   }
 
   public reverseTransform(value: any): any {
-    return typeof value === 'string' ?  value === 'true' : value;
+    return typeof value === 'string' ?  value === 'true' : !!value;
   }
 }
 

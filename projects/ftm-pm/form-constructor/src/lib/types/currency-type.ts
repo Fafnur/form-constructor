@@ -8,13 +8,7 @@ export class CurrencyType extends AbstractType {
   }
 
   public reverseTransform(value: any): any {
-    return value != null ? this.getNumber(value.toString()) :  null;
-  }
-
-  private getNumber(value: string): number {
-    const val = value.replace(/\D+/g, '');
-
-    return +val;
+    return value != null ? value :  null;
   }
 }
 

@@ -43,6 +43,7 @@ export { SelectType } from './lib/types/select-type';
 export { TextareaType } from './lib/types/textarea-type';
 export { TextType } from './lib/types/text-type';
 export { HiddenType } from './lib/types/hidden-type';
+export { NumberType } from './lib/types/number-type';
 
 // Other
 export { ErrorStateMatcher } from './lib/matchers/error-state.matcher';
