@@ -25,6 +25,8 @@ export interface ListConfig {
   groups?: string[];
   actions?: any[];
   paginator?: boolean;
+
+  getPaginatorIndex ?(config: any): number;
 }
 
 export interface ListCell {
@@ -110,24 +112,24 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
             };
             break;
           case 'date':
-            item.dataName = (row) => {
+            item.dataName = (row: any, column: ListCell) => {
               if (typeof row === 'object') {
-                if (row[item]) {
-                  return moment(new Date(row[item]));
+                if (row[column.columnDef] != null) {
+                  return moment(new Date(row[column.columnDef]));
                 } else {
-                  return moment(new Date());
+                  return null;
                 }
-              } else if (row) {
+              } else if (row != null) {
                 return moment(new Date(row));
               } else {
-                return moment(new Date());
+                return null;
               }
             };
             break;
           default: {
-            item.dataName = (row) => {
+            item.dataName = (row, column) => {
               if (typeof row === 'object') {
-                return row[item];
+                return row[column.columnDef];
               } else if (row) {
                 return row;
               } else {
@@ -229,8 +231,8 @@ export class ListComponent implements OnInit, OnChanges {
     this.pageEvent.emit(event);
   }
 
-  public getIndex(i): void {
-    return i + 1 + this.config.pageIndex * this.config.pageSize;
+  public getIndex(i, column: any = {}): void {
+    return i + 1 + this.getPaginatorPageIndex() * this.config.pageSize;
   }
 
   public getHeader(column: ListCell, header: string = null, usePrefix: boolean = null): string {
@@ -341,6 +343,10 @@ export class ListComponent implements OnInit, OnChanges {
 
   public isGroupActionActive(cell: ListCell): boolean {
     return this.forms[cell.columnDef].filter(item => item).length > 0;
+  }
+
+  public getPaginatorPageIndex(): number {
+    return typeof this.config.getPaginatorIndex === 'function' ? this.config.getPaginatorIndex(this.config) : this.config.pageIndex;
   }
 
   private getConfig(): ListConfig {

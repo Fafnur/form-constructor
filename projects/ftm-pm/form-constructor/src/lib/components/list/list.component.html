@@ -67,7 +67,7 @@
         </ng-container>
         <ng-container *ngSwitchCase="'date'">
           <td mat-cell *matCellDef="let row; let i=index;"  [ngStyle]="column.style">
-            {{ column.dataName(row) | date: column.format ? column.format : 'dd.MM.y' }}
+            {{ column.dataName(row, column) ? (column.dataName(row, column) | date: column.format ? column.format : 'dd.MM.y') : "-" }}
           </td>
         </ng-container>
         <ng-container *ngSwitchCase="'index'">
@@ -95,7 +95,7 @@
   </table>
 </div>
 
-<mat-paginator class="mat-paginator_v1" [length]="config.count" [pageSize]="config.pageSize" [pageIndex]="config.pageIndex"
+<mat-paginator class="mat-paginator_v1" [length]="config.count" [pageSize]="config.pageSize" [pageIndex]="getPaginatorPageIndex()"
                [pageSizeOptions]="config.pageSizeOptions" (page)="onPaginate($event)" *ngIf="config.paginator">
 </mat-paginator>
 
