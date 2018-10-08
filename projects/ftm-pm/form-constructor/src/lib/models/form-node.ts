@@ -344,15 +344,15 @@ export class FormNode implements FormNodeInterface {
   }
 
   private getSubPropertyValue(property: string, data: Object): any {
-    let val = data;
+    let val = data || null;
 
     if (property && val != null) {
       const paths =  property.split('.');
       for (const path of paths) {
-        if (val.hasOwnProperty(path)) {
+        if (val && val.hasOwnProperty(path)) {
           val = val[path];
         } else {
-          val = undefined;
+          val = null;
           break;
         }
       }

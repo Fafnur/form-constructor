@@ -35,3 +35,10 @@ th.mat-header-cell {
   }
 }
 
+.links-item {
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

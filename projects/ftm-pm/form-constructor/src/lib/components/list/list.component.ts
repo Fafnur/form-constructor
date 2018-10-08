@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output,
 import { MatCheckboxChange, MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment_ from 'moment/moment';
+import { CurrencyPipe } from '@angular/common';
 const moment = moment_;
 
 export interface ListConfig {
@@ -36,6 +37,8 @@ export interface ListCell {
   type: string;
   header?: string;
   usePrefix?: boolean;
+  subProperty?: boolean;
+  property?: string;
   isNullValue?: string;
   actions?: any[];
 
@@ -100,6 +103,17 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
       }
       if (typeof item.dataName !== 'function') {
         switch (item.type) {
+          case 'currency':
+            item.dataName = (row, column, entity, service) => {
+              if (typeof row === 'object' && Number(row[item.columnDef])) {
+                return service.transform(row[item.columnDef], 'RUB', 'symbol-narrow');
+              } else if (row != null && Number(row)) {
+                return  service.transform(row, 'RUB', 'symbol-narrow');
+              } else {
+                return row || '-';
+              }
+            };
+            break;
           case 'bool':
             item.dataName = (row) => {
               if (typeof row === 'object') {
@@ -112,17 +126,21 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
             };
             break;
           case 'date':
-            item.dataName = (row: any, column: ListCell) => {
-              if (typeof row === 'object') {
-                if (row[column.columnDef] != null) {
-                  return moment(new Date(row[column.columnDef]));
+            item.dataName = (row: any, column: ListCell, entity: any, service: any) => {
+              if (column.subProperty) {
+                return moment(new Date(row));
+              } else {
+                if (typeof row === 'object') {
+                  if (row[column.columnDef] != null) {
+                    return moment(new Date(row[column.columnDef]));
+                  } else {
+                    return null;
+                  }
+                } else if (row != null) {
+                  return moment(new Date(row));
                 } else {
                   return null;
                 }
-              } else if (row != null) {
-                return moment(new Date(row));
-              } else {
-                return null;
               }
             };
             break;
@@ -154,7 +172,10 @@ export function transformList(columns: any[], isNullValue: string = '-'): ListCe
 @Component({
   selector: 'fc-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
+  providers: [
+    CurrencyPipe
+  ]
 })
 export class ListComponent implements OnInit, OnChanges {
   @Input() public data: any[];
@@ -174,7 +195,8 @@ export class ListComponent implements OnInit, OnChanges {
   public formsSelectAll: any = {};
   @HostBinding('attr.class') public class = 'fc-list';
 
-  public constructor(protected translateService: TranslateService) {
+  public constructor(protected translateService: TranslateService,
+                     private currencyPipe: CurrencyPipe) {
   }
 
   public ngOnInit() {
@@ -257,6 +279,10 @@ export class ListComponent implements OnInit, OnChanges {
       header = data[action.entityLabel];
       usePrefix = false;
     }
+    if (typeof action.entityName === 'function') {
+      return action.entityName(data, action, column);
+    }
+
     return usePrefix ? `${this.config.translatePrefix}${header}` : header;
   }
 
@@ -328,8 +354,16 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
-  public getDataName(row, column): string {
-    return column.subProperty ?  this.displayPropertyView(row, column) : column.dataName(row, column, this.data, this.translateService);
+  public getDataName(row, column: ListCell): any {
+    if (column.subProperty) {
+      return this.displayPropertyView(row, column);
+    } else {
+      if (column.type === 'currency') {
+        return column.dataName(row, column, this.data, this.currencyPipe);
+      } else {
+        return column.dataName(row, column, this.data, this.translateService);
+      }
+    }
   }
 
   public onGroupAction(action: any, cell: ListCell, event): void {
@@ -339,6 +373,10 @@ export class ListComponent implements OnInit, OnChanges {
       cell: cell,
       event: event
     });
+  }
+
+  public getDateFormat(column: ListCell): string {
+    return column.format ? column.format : 'dd.MM.y';
   }
 
   public isGroupActionActive(cell: ListCell): boolean {
@@ -403,7 +441,7 @@ export class ListComponent implements OnInit, OnChanges {
   private displayPropertyView(data: any, column: ListCell): any {
     let val = data;
 
-    if (column['property'] && val != null) {
+    if (column['property'] && column['property'] !== 'this' && val != null) {
       const paths =  column['property'].split('.');
       for (const path of paths) {
         if (val.hasOwnProperty(path)) {
@@ -414,6 +452,10 @@ export class ListComponent implements OnInit, OnChanges {
       }
     }
 
-    return column.dataName(val, column, data, this.translateService);
+    if (column.type === 'currency') {
+      return column.dataName(val, column, this.data, this.currencyPipe);
+    } else {
+      return column.dataName(val, column, this.data, this.translateService);
+    }
   }
 }
