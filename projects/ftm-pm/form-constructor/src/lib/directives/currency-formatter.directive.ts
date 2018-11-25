@@ -17,7 +17,7 @@ export class CurrencyFormatterDirective implements OnInit {
   }
 
   ngOnInit() {
-    this.el.value = this.currencyPipe.transform(this.el.value, 'RUB', 'symbol-narrow');
+    this.el.value = this.currencyPipe.transform(this.nomalizeVal(this.el.value), 'RUB', 'symbol-narrow');
   }
 
   // ngOnChanges(changes: SimpleChanges): void {
@@ -26,11 +26,21 @@ export class CurrencyFormatterDirective implements OnInit {
 
   @HostListener('focus', ['$event.target.value'])
   onFocus(value) {
-    this.el.value = this.el.value.replace(/₽/gi, '').replace(/\,/g, '');
+    this.el.value = this.nomalizeVal(this.el.value);
   }
 
   @HostListener('blur', ['$event.target.value'])
   onBlur(value) {
-    this.el.value = this.currencyPipe.transform(value, 'RUB', 'symbol-narrow');
+    this.el.value = this.currencyPipe.transform(this.nomalizeVal(value), 'RUB', 'symbol-narrow');
+  }
+
+  private nomalizeVal(value: string): string {
+    let val = value.replace(/₽/gi, '').replace(/\,/g, '');
+    const ret = value.split('.');
+    if (ret.length > 2) {
+      val = `${ret.slice(0, ret.length - 2).join('')}.${ret[ret.length - 1]}`;
+    }
+
+    return val;
   }
 }
